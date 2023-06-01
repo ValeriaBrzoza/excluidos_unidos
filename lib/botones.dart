@@ -15,9 +15,10 @@ class LogInWithGoogle extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFDF8600)),
         child: SizedBox(
-          height: 70,
-          width: double.infinity,
-          child: Center(child: Text(text)),
-        ));
+            height: 70,
+            width: double.infinity,
+            child: Center(
+              child: Text(text, style: TextStyle(color: Colors.white)),
+            )));
   }
 }

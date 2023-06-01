@@ -14,12 +14,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('$index Tareas'),
-          actions: [IconButton(onPressed: () {}, icon: Icon(Icons.add))],
+          title: Text('$index Mis listas de tareas'),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          child: Icon(Icons.ac_unit_rounded),
+          child: Icon(Icons.add),
         ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: index,
