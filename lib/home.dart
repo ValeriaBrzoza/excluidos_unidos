@@ -1,4 +1,9 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
+import 'package:prueba_01/falsedatabase.dart';
+import 'package:prueba_01/list.dart';
+import 'package:prueba_01/tasklist.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,29 +13,35 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int index = 0;
+  List<TaskList> listas = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    listas = DataProvider.instance.getLists();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('$index Mis listas de tareas'),
+          title: const Text('Mis listas de tareas'),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
         ),
+        //Botones de la Barra de navegacion
         bottomNavigationBar: NavigationBar(
-          selectedIndex: index,
-          onDestinationSelected: (value) {
-            setState(() {
-              index = value;
-            });
-          },
-          destinations: [
+          destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_filled),
               label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.list),
+              label: 'My Lists',
             ),
             NavigationDestination(
               icon: Icon(Icons.settings),
@@ -38,10 +49,21 @@ class _HomePageState extends State<HomePage> {
             )
           ],
         ),
+        //vista de listas
         body: ListView.builder(
-          itemCount: 1000,
-          itemBuilder: (context, index) =>
-              ListTile(title: Text('$index Holaaa ')),
+          itemCount: listas.length,
+          itemBuilder: (context, index) => ListTile(
+            title: Text(listas[index].name),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ShowList(id: index.toString())));
+            },
+          ),
         ));
   }
 }
+
+
+          // itemCount: 1,
+          // itemBuilder: (context, index) =>
+          //     ListTile(title: Text('Lista nro $index')),
