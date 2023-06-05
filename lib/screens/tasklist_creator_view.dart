@@ -71,7 +71,9 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     onChanged: (value) {
                       if (value != "") {
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => showSaveButton = true));
+                        showSaveButtonTimer = Timer(
+                            const Duration(milliseconds: 200),
+                            () => setState(() => showSaveButton = true));
                         setState(() {
                           name = value;
                         });

@@ -25,13 +25,18 @@ class CustomSwitchListTile extends StatelessWidget {
           child: InkWell(
             onTap: onChanged != null ? onTap : null,
             child: SizedBox(
-              height: 60,
+              height: 80,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: TextStyle(fontSize: 17, color: onChanged == null ? Colors.black45 : null)),
-                  if (description != null) Text(description!, style: TextStyle(fontSize: 12, color: Colors.black45))
+                  Text(label,
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: onChanged == null ? Colors.black45 : null)),
+                  if (description != null)
+                    Text(description!,
+                        style: TextStyle(fontSize: 12, color: Colors.black45))
                 ],
               ),
             ),
