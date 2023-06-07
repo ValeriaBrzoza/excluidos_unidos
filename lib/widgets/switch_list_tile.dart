@@ -19,24 +19,23 @@ class CustomSwitchListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //fila
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, //va a separar cada elemento de la fila
       children: [
         Expanded(
+          //ocupa todo ancho posible (por ser fila)
           child: InkWell(
+            //detecta tap y le da el efecto del fondo al hacerlo
             onTap: onChanged != null ? onTap : null,
             child: SizedBox(
+              //altura de la fila
               height: 80,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center, //centra elementos columna
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label,
-                      style: TextStyle(
-                          fontSize: 17,
-                          color: onChanged == null ? Colors.black45 : null)),
-                  if (description != null)
-                    Text(description!,
-                        style: TextStyle(fontSize: 12, color: Colors.black45))
+                  Text(label, style: TextStyle(fontSize: 17, color: onChanged == null ? Colors.black45 : null)),
+                  if (description != null) Text(description!, style: TextStyle(fontSize: 12, color: Colors.black45))
                 ],
               ),
             ),

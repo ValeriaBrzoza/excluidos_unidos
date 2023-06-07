@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:adaptative_modals/adaptative_modals.dart';
 import 'package:flutter/material.dart';
 import 'package:prueba_01/widgets/switch_list_tile.dart';
 
@@ -35,26 +34,28 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
 
   @override
   void dispose() {
-    showSaveButtonTimer?.cancel();
-    super.dispose();
+    //se llama cuando el boton desaparece
+    showSaveButtonTimer?.cancel(); //cancela timer del boton, si existe
+    super.dispose(); //es metodo de superclase
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      //cartel flotante, centrado
       child: ClipRRect(
+        //recorta bordes para que sea redondeado
         borderRadius: BorderRadius.circular(16),
         child: AnimatedContainer(
+          //conteniner que se agrega para el boton de guardar
           duration: const Duration(milliseconds: 200),
           height: 376 + (showSaveButton ? 70 : 0),
           child: Scaffold(
-            appBar: AdaptativeModalAppBarWrapper(
-              appbar: AppBar(
-                title: const Text('Crear lista de tareas'),
-              ),
+            appBar: AppBar(
+              title: const Text('Crear lista de tareas'),
             ),
             //
-            floatingActionButton: showSaveButton
+            floatingActionButton: showSaveButton //boton de continuar
                 ? FloatingActionButton.extended(
                     label: const Text("Continuar"),
                     onPressed: () {},
@@ -65,17 +66,17 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
             body: Padding(
               padding: const EdgeInsets.all(12.0),
               child: ListView(
-                shrinkWrap: true,
+                shrinkWrap: true, //list view no ocupe todo el alto
                 children: [
                   TextField(
+                    //recuadro de texto para el nombre de la lista
                     onChanged: (value) {
                       if (value != "") {
+                        //debe aparecer boton de guardar
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(
-                            const Duration(milliseconds: 200),
-                            () => setState(() => showSaveButton = true));
+                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => showSaveButton = true));
                         setState(() {
-                          name = value;
+                          name = value; //guarda nombre
                         });
                       } else {
                         showSaveButtonTimer?.cancel();
@@ -86,11 +87,13 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       }
                     },
                     decoration: const InputDecoration(
+                      //visual del textfield
                       hintText: 'Nombre de la lista',
                       filled: true,
                     ),
                   ),
                   CustomSwitchListTile(
+                    //barrita swichiable propia
                     label: 'Compartir lista',
                     value: isShared,
                     onTap: isShared ? () {} : null,
@@ -102,18 +105,20 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     },
                   ),
                   CustomSwitchListTile(
+                    //barrita swichiable propia
                     label: 'Lista supervisada',
                     value: isSupervised,
                     onTap: () {},
-                    onChanged: isShared
+                    onChanged: isShared //si IsShared, te permite cambiar T y F
                         ? (value) {
                             setState(() {
                               isSupervised = value;
                             });
                           }
-                        : null,
+                        : null, //si no IsShared, no te deja cambiarla (gris deshabilitado)
                   ),
                   CustomSwitchListTile(
+                    //barrita swichiable propia
                     label: 'Requerir fecha máxima para las tareas',
                     value: tasksLimitDateRequired,
                     onChanged: (value) {
@@ -123,16 +128,18 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     },
                   ),
                   CustomSwitchListTile(
+                    //barrita swichiable propia
                     label: 'Requerir fecha máxima global',
                     value: globalDeadLine,
                     description: "25 de mayo de 2024",
-                    onChanged: tasksLimitDateRequired
+                    onChanged: tasksLimitDateRequired //si fecha limite de tareas
                         ? (value) {
                             setState(() {
+                              //te permite cambiar T y F
                               globalDeadLine = value;
                             });
                           }
-                        : null,
+                        : null, //si no fecha limite por tarea, no te deja cambiarla (gris deshabilitado)
                   ),
                 ],
               ),

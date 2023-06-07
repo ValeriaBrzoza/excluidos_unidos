@@ -17,34 +17,42 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     listas = DataProvider.instance.getLists();
-    super.initState();
+    super.initState(); //"BASE DE DATOS" obteniendo las listas
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //devuelve vista
       appBar: AppBar(
+        //vista tiene barrita arriba
         title: const Text('Mis listas de tareas'),
       ),
       floatingActionButton: FloatingActionButton(
+        //boton de añadir lista
         onPressed: () {
-          showDialog(context: context, builder: (context) => const TaskListCreatorView());
+          showDialog(context: context, builder: (context) => const TaskListCreatorView()); //te lleva a otra vista
           // Navigator.of(context).push(AdaptativeModalPageRoute(width: width, builder: (context) => TaskListCreatorView()));
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add), //icono del boton
       ),
       //Botones de la Barra de navegacion
       bottomNavigationBar: NavigationBar(
+        //barrita de abajo
         destinations: const [
+          //NavigationBar va a tener logica de navergacion
           NavigationDestination(
+            //dibujos de abajo
             icon: Icon(Icons.home_filled),
             label: 'Home',
           ),
           NavigationDestination(
+            //dibujos de abajo
             icon: Icon(Icons.list),
             label: 'My Lists',
           ),
           NavigationDestination(
+            //dibujos de abajo
             icon: Icon(Icons.settings),
             label: 'Settings',
           )
@@ -52,8 +60,10 @@ class _HomePageState extends State<HomePage> {
       ),
       //vista de listas
       body: ListView.builder(
+        //recibe lista de widgets y los muestra en orden scroleable
         itemCount: listas.length,
         itemBuilder: (context, index) => ListTile(
+          //elemento de la lista con formato de item
           title: Text(listas[index].name),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => TaskListView(id: index.toString())));

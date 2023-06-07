@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class LogInWithGoogle extends StatelessWidget {
-  const LogInWithGoogle({
+class LogInButton extends StatelessWidget {
+  const LogInButton({
     super.key,
     required this.text,
     required this.onPressed,

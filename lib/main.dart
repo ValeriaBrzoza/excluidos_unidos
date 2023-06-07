@@ -10,18 +10,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return MaterialApp(
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFA603F3)),
       ),
-      home: LogInPage(),
+      home: LogInPage(), //en login.dart primer ventana a abrirse
     );
   }
 }
 
 //      appBar: AppBar(
-  //      backgroundColor: Color.fromARGB(255, 166, 3, 243),
-    //    title: const Text('Eu!'),
-    //  style: TextStyle(fontWeight: FontWeight.bold)
+//      backgroundColor: Color.fromARGB(255, 166, 3, 243),
+//    title: const Text('Eu!'),
+//  style: TextStyle(fontWeight: FontWeight.bold)
