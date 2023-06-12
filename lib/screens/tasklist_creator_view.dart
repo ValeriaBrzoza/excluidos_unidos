@@ -13,7 +13,7 @@ class TaskListCreatorView extends StatefulWidget {
 class _TaskListCreatorViewState extends State<TaskListCreatorView> {
   int index = 0;
 
-  bool showSaveButton = false;
+  bool enableSaveButton = false;
 
   String name = "";
 
@@ -38,7 +38,12 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
     showSaveButtonTimer?.cancel(); //cancela timer del boton, si existe
     super.dispose(); //es metodo de superclase
   }
+  
+  bool isSaveButtomEnabled () {
+    return enableSaveButton;
+  }
 
+  //TODO: cambiar los números "mágicos" por varibles/constantes/etc.
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -49,19 +54,18 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
         child: AnimatedContainer(
           //conteniner que se agrega para el boton de guardar
           duration: const Duration(milliseconds: 200),
-          height: 376 + (showSaveButton ? 70 : 0),
+          height: 376 + 70,
           child: Scaffold(
             appBar: AppBar(
               title: const Text('Crear lista de tareas'),
             ),
             //
-            floatingActionButton: showSaveButton //boton de continuar
-                ? FloatingActionButton.extended(
+            floatingActionButton: FloatingActionButton.extended(
                     label: const Text("Continuar"),
-                    onPressed: () {},
+                    onPressed:  isSaveButtomEnabled() ? () => {} : null,
                     icon: const Icon(Icons.navigate_next),
                   )
-                : null,
+                ,
             //
             body: Padding(
               padding: const EdgeInsets.all(12.0),
@@ -74,7 +78,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       if (value != "") {
                         //debe aparecer boton de guardar
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => showSaveButton = true));
+                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => enableSaveButton = true));
                         setState(() {
                           name = value; //guarda nombre
                         });
@@ -82,7 +86,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                         showSaveButtonTimer?.cancel();
                         setState(() {
                           name = value;
-                          showSaveButton = false;
+                          enableSaveButton = false;
                         });
                       }
                     },
