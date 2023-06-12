@@ -88,7 +88,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     },
                     decoration: const InputDecoration(
                       //visual del textfield
-                      hintText: 'Nombre de la lista',
+                      labelText: 'Nombre de la lista',
                       filled: true,
                     ),
                   ),
