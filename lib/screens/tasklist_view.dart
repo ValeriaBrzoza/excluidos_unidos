@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prueba_01/screens/task_creator_view.dart';
 
 class TaskListView extends StatefulWidget {
   const TaskListView({super.key, required this.id});
@@ -18,12 +19,16 @@ class _TaskListViewState extends State<TaskListView> {
         title: Text(widget.id),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+              context: context, builder: (context) => const TaskCreatorView());
+        }, //te lleva a otra vista
         child: const Icon(Icons.add),
       ),
       body: ListView.builder(
         itemCount: 2,
-        itemBuilder: (context, index) => ListTile(title: Text('Tarea nro $index')),
+        itemBuilder: (context, index) =>
+            ListTile(title: Text('Tarea nro $index')),
       ),
     );
   }
