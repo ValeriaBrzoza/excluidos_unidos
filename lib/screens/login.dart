@@ -10,7 +10,7 @@ class LogInPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       //devuelve vista
-      backgroundColor: Color(0xFFA603F3),
+      backgroundColor: const Color(0xFFA603F3),
       body: SizedBox(
         //caja, solo podemos darle tamaño
         height: size.height,
@@ -41,7 +41,7 @@ class LogInPage extends StatelessWidget {
               right: 0,
               child: Padding(
                 //borde en blanco
-                padding: EdgeInsets.all(8.0), //propiedad del borde
+                padding: const EdgeInsets.all(8.0), //propiedad del borde
                 child: Column(
                   //esto esta a 8 puntos de distancia entre todos los bordes
                   mainAxisAlignment: MainAxisAlignment
@@ -52,14 +52,14 @@ class LogInPage extends StatelessWidget {
                       text: 'Log in with Google',
                       onPressed: () {},
                     ),
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
                     LogInButton(
                       //widget propio
                       text: 'Continue as guest',
                       onPressed: () {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           //MaterialPageRoute le da el COMO hacer el cambio de vistas, al navigator
-                          builder: (context) => HomePage(), //pushea a homepage
+                          builder: (context) => const HomePage(), //pushea a homepage
                         ));
                       },
                     )

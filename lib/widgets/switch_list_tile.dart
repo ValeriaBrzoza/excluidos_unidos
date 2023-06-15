@@ -35,7 +35,7 @@ class CustomSwitchListTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(label, style: TextStyle(fontSize: 17, color: onChanged == null ? Colors.black45 : null)),
-                  if (description != null) Text(description!, style: TextStyle(fontSize: 12, color: Colors.black45))
+                  if (description != null) Text(description!, style: const TextStyle(fontSize: 12, color: Colors.black45))
                 ],
               ),
             ),

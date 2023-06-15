@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:prueba_01/screens/login.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFA603F3)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFA603F3)),
       ),
-      home: LogInPage(), //en login.dart primer ventana a abrirse
+      home: const LogInPage(), //en login.dart primer ventana a abrirse
     );
   }
 }

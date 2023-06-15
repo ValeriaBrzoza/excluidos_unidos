@@ -91,7 +91,7 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Fecha'),
+                      const Text('Fecha'),
                       IconButton(
                         onPressed: () {
                           showDatePicker(
@@ -103,7 +103,7 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
                               firstDate: DateTime(2022),
                               lastDate: DateTime(2024));
                         },
-                        icon: Icon(Icons.calendar_month_outlined),
+                        icon: const Icon(Icons.calendar_month_outlined),
                       ),
                     ],
                   ),

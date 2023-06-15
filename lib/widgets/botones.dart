@@ -13,12 +13,12 @@ class LogInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFDF8600)),
+        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDF8600)),
         child: SizedBox(
             height: 70,
             width: double.infinity,
             child: Center(
-              child: Text(text, style: TextStyle(color: Colors.white)),
+              child: Text(text, style: const TextStyle(color: Colors.white)),
             )));
   }
 }
