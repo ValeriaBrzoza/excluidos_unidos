@@ -20,7 +20,8 @@ class CustomSwitchListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       //fila
-      mainAxisAlignment: MainAxisAlignment.spaceBetween, //va a separar cada elemento de la fila
+      mainAxisAlignment: MainAxisAlignment
+          .spaceBetween, //va a separar cada elemento de la fila
       children: [
         Expanded(
           //ocupa todo ancho posible (por ser fila)
@@ -31,11 +32,18 @@ class CustomSwitchListTile extends StatelessWidget {
               //altura de la fila
               height: 80,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center, //centra elementos columna
+                mainAxisAlignment:
+                    MainAxisAlignment.center, //centra elementos columna
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: TextStyle(fontSize: 17, color: onChanged == null ? Colors.black45 : null)),
-                  if (description != null) Text(description!, style: const TextStyle(fontSize: 12, color: Colors.black45))
+                  Text(label,
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: onChanged == null ? Colors.black45 : null)),
+                  if (description != null)
+                    Text(description!,
+                        style: const TextStyle(
+                            fontSize: 12, color: Colors.black45))
                 ],
               ),
             ),

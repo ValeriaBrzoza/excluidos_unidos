@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prueba_01/screens/log_in_screens/log_in_screen.dart';
 import 'package:prueba_01/widgets/botones.dart';
 import 'package:prueba_01/screens/home.dart';
 
@@ -8,9 +9,10 @@ class LogInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeColors = Theme.of(context).colorScheme;
     return Scaffold(
       //devuelve vista
-      backgroundColor: const Color(0xFFA603F3),
+      backgroundColor: themeColors.primary,
       body: SizedBox(
         //caja, solo podemos darle tamaño
         height: size.height,
@@ -49,8 +51,18 @@ class LogInPage extends StatelessWidget {
                   children: [
                     LogInButton(
                       //widget propio
-                      text: 'Log in with Google',
-                      onPressed: () {},
+                      text: 'Log in',
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            //MaterialPageRoute le da el COMO hacer el cambio de vistas, al navigator
+                            builder: (context) => LogIn(
+                                size: size,
+                                themeColors: themeColors), //pushea a homepage
+                          ),
+                        );
+                      },
+                      buttonColor: themeColors.secondary,
                     ),
                     const SizedBox(height: 50),
                     LogInButton(
@@ -59,9 +71,11 @@ class LogInPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           //MaterialPageRoute le da el COMO hacer el cambio de vistas, al navigator
-                          builder: (context) => const HomePage(), //pushea a homepage
+                          builder: (context) =>
+                              const HomePage(), //pushea a homepage
                         ));
                       },
+                      buttonColor: themeColors.secondary,
                     )
                   ],
                 ),

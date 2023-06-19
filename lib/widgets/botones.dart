@@ -5,7 +5,9 @@ class LogInButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
+    required this.buttonColor,
   });
+  final Color buttonColor;
   final String text;
   final void Function()? onPressed;
 
@@ -13,7 +15,7 @@ class LogInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDF8600)),
+        style: ElevatedButton.styleFrom(backgroundColor: buttonColor),
         child: SizedBox(
             height: 70,
             width: double.infinity,
