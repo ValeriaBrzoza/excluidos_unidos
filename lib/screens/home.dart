@@ -25,9 +25,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       //devuelve vista
       appBar: AppBar(
-        //vista tiene barrita arriba
-        title: const Text('Mis listas de tareas'),
-      ),
+          //vista tiene barrita arriba
+          title: const Text('Mis listas de tareas'),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.search),
+            ),
+          ]),
       floatingActionButton: FloatingActionButton(
         //boton de añadir lista
         onPressed: () {
@@ -41,11 +46,6 @@ class _HomePageState extends State<HomePage> {
         //barrita de abajo
         destinations: const [
           //NavigationBar va a tener logica de navergacion
-          NavigationDestination(
-            //dibujos de abajo
-            icon: Icon(Icons.home_filled),
-            label: 'Home',
-          ),
           NavigationDestination(
             //dibujos de abajo
             icon: Icon(Icons.list),
