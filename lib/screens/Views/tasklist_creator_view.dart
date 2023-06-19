@@ -54,16 +54,19 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
         child: AnimatedContainer(
           //conteniner que se agrega para el boton de guardar
           duration: const Duration(milliseconds: 200),
-          height: 376 + 70,
+          height: 520,
           child: Scaffold(
             appBar: AppBar(
               title: const Text('Crear lista de tareas'),
             ),
             //
-            floatingActionButton: FloatingActionButton.extended(
-              label: const Text("Continuar"),
-              onPressed: isSaveButtomEnabled() ? () => {} : null,
-              icon: const Icon(Icons.navigate_next),
+            bottomNavigationBar: Padding(
+              padding: EdgeInsets.all(10),
+              //isSaveButtomEnabled() ? () => {} : null,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [TextButton.icon(onPressed: () {}, icon: Icon(Icons.navigate_next), label: Text("continuar"))],
+              ),
             ),
             //
             body: Padding(
@@ -77,9 +80,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       if (value != "") {
                         //debe aparecer boton de guardar
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(
-                            const Duration(milliseconds: 200),
-                            () => setState(() => enableSaveButton = true));
+                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => enableSaveButton = true));
                         setState(() {
                           name = value; //guarda nombre
                         });
