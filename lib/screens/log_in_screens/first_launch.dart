@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:prueba_01/screens/log_in_screens/log_in_screen.dart';
 import 'package:prueba_01/widgets/botones.dart';
@@ -29,8 +31,7 @@ class LogInPage extends StatelessWidget {
                   text: const TextSpan(
                     //un richtext tiene un textspan. va a contener uno o mas text
                     text: 'Eu!', //con diferentes cosas
-                    style: TextStyle(
-                        color: Colors.white, fontSize: 80, fontFamily: 'Jua'),
+                    style: TextStyle(color: Colors.white, fontSize: 80, fontFamily: 'Jua'),
                   ),
                 ),
               ),
@@ -46,21 +47,17 @@ class LogInPage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0), //propiedad del borde
                 child: Column(
                   //esto esta a 8 puntos de distancia entre todos los bordes
-                  mainAxisAlignment: MainAxisAlignment
-                      .center, //eje principal de la columna, .center porque lo queremos centrado
+                  mainAxisAlignment: MainAxisAlignment.center, //eje principal de la columna, .center porque lo queremos centrado
                   children: [
                     LogInButton(
                       //widget propio
-                      text: 'Log in',
+                      text: 'Log in with google',
                       onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            //MaterialPageRoute le da el COMO hacer el cambio de vistas, al navigator
-                            builder: (context) => LogIn(
-                                size: size,
-                                themeColors: themeColors), //pushea a homepage
-                          ),
-                        );
+                        if (kIsWeb) {
+                          FirebaseAuth.instance.signInWithRedirect(GoogleAuthProvider());
+                        } else {
+                          FirebaseAuth.instance.signInWithProvider(GoogleAuthProvider());
+                        }
                       },
                       buttonColor: themeColors.secondary,
                     ),
@@ -71,8 +68,7 @@ class LogInPage extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           //MaterialPageRoute le da el COMO hacer el cambio de vistas, al navigator
-                          builder: (context) =>
-                              const HomePage(), //pushea a homepage
+                          builder: (context) => const HomePage(), //pushea a homepage
                         ));
                       },
                       buttonColor: themeColors.secondary,

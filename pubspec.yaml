@@ -37,6 +37,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   adaptative_modals:
     git: https://github.com/Martoxdlol/flutter_adaptative_modals.git
+  firebase_core: ^2.14.0
+  firebase_auth: ^4.6.3
+  cloud_firestore: ^4.8.1
+  firebase_messaging: ^14.6.3
 
 dev_dependencies:
   flutter_test:
