@@ -1,5 +1,7 @@
 // Ejemplo de lista de tareas
 // Falta todo el tema de las tareas en si
+import 'package:excluidos_unidos/models/tasks.dart';
+
 class TaskList {
   TaskList({
     required this.name,
@@ -16,6 +18,7 @@ class TaskList {
   final List<String> supervisorsIds;
   final bool tasksLimitDateRequired;
   final DateTime? globalDeadline;
+  List<Task> tasks = [];
 
   factory TaskList.fromJson(Map<String, Object> json) {
     return TaskList(
@@ -44,4 +47,10 @@ class TaskList {
       // Faltan las tareas
     };
   }
+
+  void addTask(Task newTask) {
+    tasks.add(newTask);
+  }
+
+  List<Task> get tasksList => tasks;
 }

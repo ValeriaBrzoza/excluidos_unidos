@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:excluidos_unidos/models/tasks.dart';
 import 'package:flutter/material.dart';
 
 class TaskCreatorView extends StatefulWidget {
@@ -53,7 +54,9 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
             //
             floatingActionButton: FloatingActionButton.extended(
               label: const Text("Crear"),
-              onPressed: isSaveButtomEnabled() ? () => {} : null,
+              onPressed: isSaveButtomEnabled()
+                  ? () => {Navigator.of(context).pop(Task(title: name))}
+                  : null,
               icon: const Icon(Icons.navigate_next),
             ),
             //
