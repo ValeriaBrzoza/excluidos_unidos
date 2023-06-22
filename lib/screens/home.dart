@@ -28,22 +28,19 @@ class _HomePageState extends State<HomePage> {
         children: screens,
       ),
       //Botones de la Barra de navegacion
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: selectedIndex,
-        onTap: (value) {
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (value) {
           setState(() {
             selectedIndex = value;
           });
         },
-        fixedColor: themeColors.secondary,
-        backgroundColor: themeColors.primary,
-        unselectedItemColor: themeColors.background,
-        items: const [
-          BottomNavigationBarItem(
+        destinations: const [
+          NavigationDestination(
             icon: Icon(Icons.list),
             label: 'My Lists',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             //dibujos de abajo
             icon: Icon(Icons.settings),
             label: 'Settings',
