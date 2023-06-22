@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:prueba_01/widgets/switch_list_tile.dart';
+import 'package:excluidos_unidos/widgets/switch_list_tile.dart';
 
 class TaskListCreatorView extends StatefulWidget {
   const TaskListCreatorView({super.key});

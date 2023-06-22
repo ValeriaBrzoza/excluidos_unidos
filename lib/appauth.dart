@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:prueba_01/screens/home.dart';
-import 'package:prueba_01/screens/log_in_screens/first_launch.dart';
+import 'package:excluidos_unidos/screens/home.dart';
+import 'package:excluidos_unidos/screens/log_in_screens/first_launch.dart';
 
 class AppAuthWrapper extends StatefulWidget {
   const AppAuthWrapper({super.key});

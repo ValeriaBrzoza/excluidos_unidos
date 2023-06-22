@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:prueba_01/screens/Views/lists_view.dart';
-import 'package:prueba_01/screens/Views/settings_screen.dart';
-import 'package:prueba_01/models/tasklist.dart';
+import 'package:excluidos_unidos/screens/Views/lists_view.dart';
+import 'package:excluidos_unidos/screens/Views/settings_screen.dart';
+import 'package:excluidos_unidos/models/tasklist.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

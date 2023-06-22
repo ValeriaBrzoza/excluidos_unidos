@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:prueba_01/screens/log_in_screens/log_in_screen.dart';
-import 'package:prueba_01/widgets/botones.dart';
-import 'package:prueba_01/screens/home.dart';
+import 'package:excluidos_unidos/widgets/botones.dart';
+import 'package:excluidos_unidos/screens/home.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});

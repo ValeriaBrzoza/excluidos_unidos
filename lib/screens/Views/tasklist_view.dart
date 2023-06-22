@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prueba_01/screens/Views/task_creator_view.dart';
+import 'package:excluidos_unidos/screens/Views/task_creator_view.dart';
 
 class TaskListView extends StatefulWidget {
   const TaskListView({super.key, required this.id});
