@@ -4,7 +4,7 @@ import 'package:settings_ui/settings_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-final Uri _url = Uri.parse('https://github.com');
+final Uri _url = Uri.parse('https://github.com/ValeriaBrzoza/excluidos_unidos');
 
 class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
