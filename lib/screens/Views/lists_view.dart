@@ -27,7 +27,8 @@ class _ListsViewState extends State<ListsView> {
       //devuelve vista
       appBar: AppBar(
           //vista tiene barrita arriba
-          title: const Text('Mis listas de tareas'),
+          title: const Text('Mis tareas'),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           actions: [
             IconButton(
               onPressed: () {},
@@ -56,7 +57,7 @@ class _ListsViewState extends State<ListsView> {
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => TaskListView(
-                id: index.toString(),
+                id: listas[index].name,
                 tasksList: listas[index],
               ),
             ));
