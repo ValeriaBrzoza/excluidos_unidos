@@ -61,11 +61,11 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
             ),
             //
             bottomNavigationBar: Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               //isSaveButtomEnabled() ? () => {} : null,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [ElevatedButton.icon(onPressed: () {}, icon: Icon(Icons.navigate_next), label: Text("continuar"))],
+                children: [ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.navigate_next), label: const Text("continuar"))],
               ),
             ),
             //
