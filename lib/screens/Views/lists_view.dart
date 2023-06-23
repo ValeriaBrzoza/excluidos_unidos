@@ -53,7 +53,11 @@ class _ListsViewState extends State<ListsView> {
           title: Text(listas[index].name),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => TaskListView(id: index.toString())));
+              builder: (context) => TaskListView(
+                id: index.toString(),
+                tasksList: listas[index],
+              ),
+            ));
           },
         ),
       ),

@@ -20,7 +20,6 @@ class _HomePageState extends State<HomePage> {
       const ListsView(),
       const SettingsView(),
     ];
-    final themeColors = Theme.of(context).colorScheme;
 
     return Scaffold(
       body: IndexedStack(
