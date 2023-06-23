@@ -33,7 +33,9 @@ class _TaskListViewState extends State<TaskListView> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           newTask = await showDialog(
-              context: context, builder: (context) => const TaskCreatorView());
+            context: context,
+            builder: (context) => const TaskCreatorView(),
+          );
           setState(() {
             widget.tasksList.addTask(newTask);
           });

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:excluidos_unidos/models/tasklist.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/widgets/switch_list_tile.dart';
 
@@ -65,7 +66,28 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
               //isSaveButtomEnabled() ? () => {} : null,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.navigate_next), label: const Text("continuar"))],
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: isSaveButtomEnabled()
+                        ? () => {
+                              Navigator.of(context).pop(
+                                TaskList(
+                                    name: name,
+                                    usersIds: [], //como solucionamos esto?
+                                    isShared: isShared,
+                                    supervisorsIds: [],
+                                    tasksLimitDateRequired:
+                                        tasksLimitDateRequired,
+                                    globalDeadline:
+                                        null //Agregar fecha de vencimiento
+                                    ),
+                              )
+                            }
+                        : null,
+                    icon: const Icon(Icons.navigate_next),
+                    label: const Text("Crear"),
+                  )
+                ],
               ),
             ),
             //
@@ -80,7 +102,9 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       if (value != "") {
                         //debe aparecer boton de guardar
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => enableSaveButton = true));
+                        showSaveButtonTimer = Timer(
+                            const Duration(milliseconds: 200),
+                            () => setState(() => enableSaveButton = true));
                         setState(() {
                           name = value; //guarda nombre
                         });

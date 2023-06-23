@@ -36,12 +36,14 @@ class _ListsViewState extends State<ListsView> {
           ]),
       floatingActionButton: FloatingActionButton(
         //boton de añadir lista
-        onPressed: () {
-          showDialog(
+        onPressed: () async {
+          final newList = await showDialog(
               context: context,
-              builder: (context) =>
-                  const TaskListCreatorView()); //formulario de creacion de listas
-        },
+              builder: (context) => const TaskListCreatorView());
+          setState(() {
+            listas.add(newList);
+          });
+        }, //formulario de creacion de listas
         child: const Icon(Icons.add), //icono del boton
       ),
       //vista de listas
