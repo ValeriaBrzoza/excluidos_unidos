@@ -25,11 +25,18 @@ class _ListsViewState extends State<ListsView> {
       //devuelve vista
       appBar: AppBar(
         //vista tiene barrita arriba
-        title: const Text('Mis tareas'),
+        title: const Text('Mis Listas'),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: MySearchDelegate(
+                  listsStream : listsStream
+                  ),
+              );
+            },
             icon: const Icon(Icons.search),
           ),
           IconButton(
@@ -46,7 +53,7 @@ class _ListsViewState extends State<ListsView> {
           if (newList == null) return; //si no se crea lista, no hace nada (cancela el dialogo)
 
           await DataProvider.instance.addList(newList);
-        }, //formulario de creacion de listas
+        }, //formulario de creación de listas
         child: const Icon(Icons.add), //icono del boton
       ),
       //vista de listas
@@ -54,13 +61,75 @@ class _ListsViewState extends State<ListsView> {
         stream: listsStream,
         builder: (context, snapshot) {
           //print(snapshot);
-
           return TaskListListView(lists: snapshot.data ?? []);
         },
       ),
     );
   }
 }
+
+class MySearchDelegate extends SearchDelegate {
+  MySearchDelegate({
+    required this.listsStream,
+  }); 
+
+  final Stream<List<TaskList>> listsStream;
+  
+  //TODO: poner la lista bien.
+
+  List<String> searchResults = ['Hola', 'todo', 'bien'];
+
+  @override
+  Widget? buildLeading(BuildContext context) => IconButton(
+    onPressed: () {
+      if(query.isEmpty) {
+        close(context, null);
+      } else {
+      query = '';
+      }
+    },
+    icon: const Icon(Icons.arrow_back));
+
+  @override
+  List<Widget>? buildActions(BuildContext context) => [
+    IconButton(
+      onPressed: () => close(context, null),
+      icon: const Icon(Icons.clear))
+  ];
+
+  @override
+  Widget buildResults(BuildContext context) => Center(
+    child: Text(
+      query,
+      style: const TextStyle(fontSize: 64, fontWeight: FontWeight.normal) //TODO: que entre en la lista buscada
+    )
+  );
+
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    List<String> suggestions = searchResults.where((searchResult) {
+      final result = searchResult.toLowerCase();
+      final input = query.toLowerCase();
+
+      return result.contains(input);
+    }).toList();
+
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final suggestion = suggestions[index];
+        return ListTile(
+          title: Text(suggestion),
+          onTap: () {
+            query = suggestion;
+            showResults(context);
+          },
+        );
+      },
+    );
+  }}
 
 class TaskListListView extends StatelessWidget {
   const TaskListListView({
