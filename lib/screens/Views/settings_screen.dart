@@ -26,6 +26,7 @@ class _SettingsViewState extends State<SettingsView> {
       appBar: AppBar(title: const Text('Settings')),
       body: SettingsList(
         applicationType: ApplicationType.material,
+        platform: DevicePlatform.android,
         lightTheme: themeData,
         darkTheme: themeData,
         sections: [

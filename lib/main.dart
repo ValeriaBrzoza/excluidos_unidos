@@ -1,3 +1,5 @@
+import 'package:excluidos_unidos/services/data_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'appauth.dart';
@@ -10,6 +12,14 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  FirebaseAuth.instance.authStateChanges().listen((user) {
+    if (user != null) {
+      DataProvider.instance.updateUserData(user);
+      DataProvider.instance.updateNotificationsToken();
+    }
+  });
+
   runApp(const MyApp());
 }
 
@@ -18,7 +28,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp( 
+    return GetMaterialApp(
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8C00CE), secondary: const Color(0xFFFF7A00)),
