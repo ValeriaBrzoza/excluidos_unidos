@@ -3,6 +3,7 @@ import 'package:excluidos_unidos/screens/Views/tasklist_creator_view.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
 import 'package:excluidos_unidos/screens/Views/tasklist_view.dart';
 import 'package:excluidos_unidos/models/tasklist.dart';
+import 'package:intl/intl.dart';
 
 class ListsView extends StatefulWidget {
   const ListsView({super.key});
@@ -80,7 +81,7 @@ class TaskListListView extends StatelessWidget {
           //icono de la lista
           child: Icon(lists[index].isShared ? Icons.people : Icons.person),
         ),
-        subtitle: Text("5/20"),
+        subtitle: lists[index].hasDeadline ? Text(DateFormat('dd/MM/yyyy').format(lists[index].globalDeadline!)) : null,
         //elemento de la lista con formato de item
         title: Text(lists[index].name),
         onTap: () {

@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:excluidos_unidos/models/tasklist.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/widgets/switch_list_tile.dart';
+import 'package:intl/intl.dart';
 
 class TaskListCreatorView extends StatefulWidget {
   const TaskListCreatorView({super.key});
@@ -24,7 +26,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
 
   bool tasksLimitDateRequired = false;
 
-  bool globalDeadLine = false;
+  DateTime? globalDeadLine;
 
   Timer? showSaveButtonTimer;
 
@@ -48,13 +50,28 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
     Navigator.of(context).pop(
       TaskList(
         name: name,
-        usersIds: [], //como solucionamos esto?
+        usersIds: [
+          FirebaseAuth.instance.currentUser!.uid,
+        ], //como solucionamos esto?
         isShared: isShared,
-        supervisorsIds: [],
+        supervisorsIds: [FirebaseAuth.instance.currentUser!.uid],
         tasksLimitDateRequired: tasksLimitDateRequired,
-        globalDeadline: null, //Agregar fecha de vencimiento
+        globalDeadline: globalDeadLine, //Agregar fecha de vencimiento
       ),
     );
+  }
+
+  void showSetGlobalDeadlineDialog() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(Duration(days: 365 * 10)),
+    );
+
+    setState(() {
+      globalDeadLine = date;
+    });
   }
 
   //TODO: cambiar los números "mágicos" por varibles/constantes/etc.
@@ -68,14 +85,15 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
         child: AnimatedContainer(
           //conteniner que se agrega para el boton de guardar
           duration: const Duration(milliseconds: 200),
-          height: 520,
+          height: 516,
           child: Scaffold(
             appBar: AppBar(
               title: const Text('Crear lista de tareas'),
             ),
             //
-            bottomNavigationBar: Padding(
+            bottomNavigationBar: Container(
               padding: const EdgeInsets.all(10),
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
               //isSaveButtomEnabled() ? () => {} : null,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -90,7 +108,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
             ),
             //
             body: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: ListView(
                 shrinkWrap: true, //list view no ocupe todo el alto
                 children: [
@@ -155,15 +173,18 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                   ),
                   CustomSwitchListTile(
                     //barrita swichiable propia
-                    label: 'Requerir fecha máxima global',
-                    value: globalDeadLine,
-                    description: "25 de mayo de 2024",
+                    label: 'Fecha máxima global',
+                    value: globalDeadLine != null,
+                    description: globalDeadLine != null ? DateFormat('dd MMMM y').format(globalDeadLine!) : null,
                     onChanged: tasksLimitDateRequired //si fecha limite de tareas
                         ? (value) {
-                            setState(() {
-                              //te permite cambiar T y F
-                              globalDeadLine = value;
-                            });
+                            if (value == false) {
+                              setState(() {
+                                globalDeadLine = null;
+                              });
+                            } else {
+                              showSetGlobalDeadlineDialog();
+                            }
                           }
                         : null, //si no fecha limite por tarea, no te deja cambiarla (gris deshabilitado)
                   ),

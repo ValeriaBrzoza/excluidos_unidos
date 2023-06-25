@@ -3,6 +3,8 @@ import 'package:excluidos_unidos/models/tasks.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/screens/Views/task_creator_view.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 
 class TaskListView extends StatefulWidget {
   const TaskListView({super.key, required this.tasksList});
@@ -32,6 +34,32 @@ class _TaskListViewState extends State<TaskListView> {
     );
   }
 
+  Future<void> deleteTask(String taskId) async {
+    // Request confirmation
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar tarea'),
+        content: const Text('¿Estás seguro de que quieres eliminar esta tarea?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+
+    // If confirmed, delete task
+    if (confirmed == true) {
+      await DataProvider.instance.deleteTask(widget.tasksList.id!, taskId);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<TaskList>(
@@ -54,13 +82,46 @@ class _TaskListViewState extends State<TaskListView> {
               ),
               body: ListView.builder(
                 itemCount: tasks.length,
-                itemBuilder: (context, index) => CheckboxListTile(
-                  title: Text(tasks[index].title),
-                  value: tasks[index].completed,
-                  onChanged: (bool? newValue) {
-                    DataProvider.instance.setTaskCompleted(taskList.id!, tasks[index].id!, newValue!);
-                  },
-                ),
+                itemBuilder: (context, index) {
+                  final task = tasks[index];
+
+                  final actionPane = ActionPane(
+                    extentRatio: 0.66,
+                    motion: const ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) {
+                          deleteTask(task.id!);
+                        },
+                        label: 'Eliminar',
+                        backgroundColor: Colors.red,
+                        icon: Icons.clear,
+                      ),
+                      SlidableAction(
+                        onPressed: (context) {},
+                        label: task.assignedUser != null ? "{nombre}" : 'Asignar',
+                        backgroundColor: Colors.grey,
+                        icon: task.assignedUser != null ? Icons.person : Icons.person_add,
+                      )
+                    ],
+                  );
+
+                  return Slidable(
+                    key: Key(task.id!),
+                    startActionPane: actionPane,
+                    endActionPane: actionPane,
+                    child: CheckboxListTile(
+                      title: Text(task.title),
+                      subtitle: widget.tasksList.tasksLimitDateRequired && task.deadline != null
+                          ? Text(DateFormat('dd/MM/yyyy').format(task.deadline!))
+                          : null,
+                      value: task.completed,
+                      onChanged: (bool? newValue) {
+                        DataProvider.instance.setTaskCompleted(taskList.id!, task.id!, newValue!);
+                      },
+                    ),
+                  );
+                },
               ),
             );
           },

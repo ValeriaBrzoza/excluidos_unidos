@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Task {
   final String? id;
   final String title;
@@ -27,7 +29,7 @@ class Task {
     return Task(
       id: id,
       title: json['title'],
-      deadline: json['deadline'],
+      deadline: (json['deadline'] as Timestamp?)?.toDate(),
       assignedUser: json['assigned_user'],
       completed: json['completed'],
     );

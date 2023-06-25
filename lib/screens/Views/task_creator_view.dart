@@ -4,6 +4,7 @@ import 'package:excluidos_unidos/models/tasklist.dart';
 import 'package:excluidos_unidos/models/tasks.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TaskCreatorView extends StatefulWidget {
   const TaskCreatorView({super.key, required this.tasksList});
@@ -15,27 +16,17 @@ class TaskCreatorView extends StatefulWidget {
 
 class _TaskCreatorViewState extends State<TaskCreatorView> {
   int index = 0;
-  DatePickerEntryMode? fechaMaxima;
   bool enableSaveButton = false;
 
   String name = "";
+  DateTime? deadline;
 
-  Timer? showSaveButtonTimer;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    //se llama cuando el boton desaparece
-    showSaveButtonTimer?.cancel(); //cancela timer del boton, si existe
-    super.dispose(); //es metodo de superclase
-  }
-
-  bool isSaveButtomEnabled() {
-    return enableSaveButton;
+  bool get canSave {
+    if (widget.tasksList.tasksLimitDateRequired) {
+      return name != '' && deadline != null;
+    } else {
+      return name != '';
+    }
   }
 
   Future<void> createTask() {
@@ -44,7 +35,7 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
       widget.tasksList.id!,
       Task(
         title: name,
-        deadline: null,
+        deadline: deadline,
         assignedUser: null,
         completed: false,
       ),
@@ -62,40 +53,39 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
         child: AnimatedContainer(
           //conteniner que se agrega para el boton de guardar
           duration: const Duration(milliseconds: 200),
-          height: 280,
+          height: widget.tasksList.tasksLimitDateRequired ? 240 : 206,
           child: Scaffold(
             appBar: AppBar(
               title: const Text('Agregar tarea'),
             ),
-            //
-            floatingActionButton: FloatingActionButton.extended(
-              label: const Text("Crear"),
-              onPressed: isSaveButtomEnabled() ? createTask : null,
-              icon: const Icon(Icons.navigate_next),
+            bottomNavigationBar: Container(
+              padding: const EdgeInsets.all(10),
+              color: Theme.of(context).primaryColor.withOpacity(0.1),
+              //isSaveButtomEnabled() ? () => {} : null,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: canSave ? createTask : null,
+                    icon: const Icon(Icons.navigate_next),
+                    label: const Text("Crear"),
+                  )
+                ],
+              ),
             ),
             //
             body: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: ListView(
                 shrinkWrap: true, //list view no ocupe todo el alto
                 children: [
                   TextField(
                     //recuadro de texto para el nombre de la lista
                     onChanged: (value) {
-                      if (value != "") {
-                        //debe aparecer boton de guardar
-                        showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => enableSaveButton = true));
-                        setState(() {
-                          name = value; //guarda nombre
-                        });
-                      } else {
-                        showSaveButtonTimer?.cancel();
-                        setState(() {
-                          name = value;
-                          enableSaveButton = false;
-                        });
-                      }
+                      setState(() {
+                        name = value;
+                        enableSaveButton = value != '';
+                      });
                     },
                     decoration: const InputDecoration(
                       //visual del textfield
@@ -103,25 +93,27 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
                       filled: true,
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Fecha'),
-                      IconButton(
-                        onPressed: () {
-                          showDatePicker(
-                              onDatePickerModeChange: (value) {
-                                fechaMaxima = value;
-                              },
+                  if (widget.tasksList.tasksLimitDateRequired)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(deadline != null ? DateFormat('dd MMMM y').format(deadline!) : 'Fecha'),
+                        IconButton(
+                          onPressed: () async {
+                            final date = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
-                              firstDate: DateTime(2022),
-                              lastDate: DateTime(2024));
-                        },
-                        icon: const Icon(Icons.calendar_month_outlined),
-                      ),
-                    ],
-                  ),
+                              firstDate: DateTime.now(),
+                              lastDate: widget.tasksList.globalDeadline ?? DateTime.now().add(const Duration(days: 365 * 10)),
+                            );
+                            setState(() {
+                              deadline = date;
+                            });
+                          },
+                          icon: const Icon(Icons.calendar_month_outlined),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
