@@ -1,5 +1,5 @@
 class Task {
-  final int? id;
+  final String? id;
   final String title;
   final DateTime? deadline;
   final String? assignedUser;
@@ -23,9 +23,9 @@ class Task {
     };
   }
 
-  factory Task.fromJson(Map<String, dynamic> json) {
+  factory Task.fromJson(Map<String, dynamic> json, [String? id]) {
     return Task(
-      id: json['id'],
+      id: id,
       title: json['title'],
       deadline: json['deadline'],
       assignedUser: json['assigned_user'],
@@ -34,7 +34,7 @@ class Task {
   }
 
   Task copyWith({
-    int? id,
+    String? id,
     String? title,
     DateTime? deadline,
     String? assignedUser,

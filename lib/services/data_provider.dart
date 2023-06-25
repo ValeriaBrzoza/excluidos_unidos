@@ -20,6 +20,12 @@ class DataProvider {
     return FirebaseFirestore.instance.collection('task_lists').add(list.toJson());
   }
 
+  Stream<List<Task>> getTasks(String listId) {
+    return FirebaseFirestore.instance.collection('task_lists').doc(listId).collection('tasks').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => Task.fromJson(doc.data(), doc.id)).toList();
+    });
+  }
+
   Future<void> updateList(TaskList list) {
     return FirebaseFirestore.instance.collection('task_lists').doc(list.id).update(list.toJson());
   }
@@ -29,27 +35,11 @@ class DataProvider {
   }
 
   Future<void> addTaskToTaskList(String listId, Task task) {
-    final taskListDocRef = FirebaseFirestore.instance.collection('task_lists').doc(listId);
-
-    return FirebaseFirestore.instance.runTransaction((transaction) async {
-      final taskListDoc = await transaction.get(taskListDocRef);
-      final taskList = TaskList.fromJson(taskListDoc.data()!, taskListDoc.id);
-      final lastId = taskList.tasks.isEmpty ? -1 : taskList.tasks.last.id!;
-      final newTask = task.copyWith(id: lastId + 1);
-      final newTasks = [...taskList.tasks, newTask];
-      transaction.update(taskListDocRef, {'tasks': newTasks.map((e) => e.toJson()).toList()});
-    });
+    return FirebaseFirestore.instance.collection('task_lists').doc(listId).collection('tasks').add(task.toJson());
   }
 
-  Future<void> setTaskCompleted(String listId, int id, bool completed) {
-    final taskListDocRef = FirebaseFirestore.instance.collection('task_lists').doc(listId);
-
-    return FirebaseFirestore.instance.runTransaction((transaction) async {
-      final taskListDoc = await transaction.get(taskListDocRef);
-      final taskList = TaskList.fromJson(taskListDoc.data()!, taskListDoc.id);
-      final newTasks = taskList.tasks.map((e) => e.copyWith(completed: e.id == id ? completed : e.completed)).toList();
-      transaction.update(taskListDocRef, {'tasks': newTasks.map((e) => e.toJson()).toList()});
-    });
+  Future<void> setTaskCompleted(String listId, String taskId, bool completed) {
+    return FirebaseFirestore.instance.collection('task_lists').doc(listId).collection('tasks').doc(taskId).update({'completed': completed});
   }
 
   static final instance = DataProvider();
