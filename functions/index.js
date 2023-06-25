@@ -8,6 +8,8 @@
  */
 
 const {onRequest} = require("firebase-functions/v2/https");
+const {onDocumentWritten} = require("firebase-functions/v2/firestore");
+
 const logger = require("firebase-functions/logger");
 
 // Create and deploy your first functions
