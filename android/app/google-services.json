@@ -14,6 +14,50 @@
       },
       "oauth_client": [
         {
+          "client_id": "388438593723-gpv84ddrnjeuo3t4nh6sbe3npq4jd2r4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.prueba_01",
+            "certificate_hash": "410ea20f15a447de0e3502b074a12516a7afac76"
+          }
+        },
+        {
+          "client_id": "388438593723-udf5gqkbmbsdctdgb60ma7r7ec0n0r2q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYe3FzcROLhcaMPkmJDryvaTLB7aTG16c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "388438593723-fff8nck40nta60064mljb8pq5u7bcitf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "388438593723-gjlggm98jph6hhet8jp9eldv8bfngqtu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.prueba01.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:388438593723:android:1dfa1f59baf4bc3ada999e",
+        "android_client_info": {
+          "package_name": "net.excluidos_unidos.eu"
+        }
+      },
+      "oauth_client": [
+        {
           "client_id": "388438593723-udf5gqkbmbsdctdgb60ma7r7ec0n0r2q.apps.googleusercontent.com",
           "client_type": 3
         }
