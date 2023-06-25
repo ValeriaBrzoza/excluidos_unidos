@@ -44,6 +44,19 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
     return enableSaveButton;
   }
 
+  void complete() {
+    Navigator.of(context).pop(
+      TaskList(
+        name: name,
+        usersIds: [], //como solucionamos esto?
+        isShared: isShared,
+        supervisorsIds: [],
+        tasksLimitDateRequired: tasksLimitDateRequired,
+        globalDeadline: null, //Agregar fecha de vencimiento
+      ),
+    );
+  }
+
   //TODO: cambiar los números "mágicos" por varibles/constantes/etc.
   @override
   Widget build(BuildContext context) {
@@ -68,22 +81,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: isSaveButtomEnabled()
-                        ? () => {
-                              Navigator.of(context).pop(
-                                TaskList(
-                                    name: name,
-                                    usersIds: [], //como solucionamos esto?
-                                    isShared: isShared,
-                                    supervisorsIds: [],
-                                    tasksLimitDateRequired:
-                                        tasksLimitDateRequired,
-                                    globalDeadline:
-                                        null //Agregar fecha de vencimiento
-                                    ),
-                              )
-                            }
-                        : null,
+                    onPressed: isSaveButtomEnabled() ? complete : null,
                     icon: const Icon(Icons.navigate_next),
                     label: const Text("Crear"),
                   )
@@ -102,9 +100,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       if (value != "") {
                         //debe aparecer boton de guardar
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(
-                            const Duration(milliseconds: 200),
-                            () => setState(() => enableSaveButton = true));
+                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => enableSaveButton = true));
                         setState(() {
                           name = value; //guarda nombre
                         });

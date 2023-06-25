@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import 'package:excluidos_unidos/models/tasklist.dart';
 import 'package:excluidos_unidos/models/tasks.dart';
+import 'package:excluidos_unidos/services/data_provider.dart';
 import 'package:flutter/material.dart';
 
 class TaskCreatorView extends StatefulWidget {
-  const TaskCreatorView({super.key});
+  const TaskCreatorView({super.key, required this.tasksList});
+  final TaskList tasksList;
 
   @override
   State<TaskCreatorView> createState() => _TaskCreatorViewState();
@@ -35,6 +38,19 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
     return enableSaveButton;
   }
 
+  Future<void> createTask() {
+    Navigator.of(context).pop();
+    return DataProvider.instance.addTaskToTaskList(
+      widget.tasksList.id!,
+      Task(
+        title: name,
+        deadline: null,
+        assignedUser: null,
+        completed: false,
+      ),
+    );
+  }
+
   //TODO: cambiar los números "mágicos" por varibles/constantes/etc.
   @override
   Widget build(BuildContext context) {
@@ -54,9 +70,7 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
             //
             floatingActionButton: FloatingActionButton.extended(
               label: const Text("Crear"),
-              onPressed: isSaveButtomEnabled()
-                  ? () => {Navigator.of(context).pop(Task(title: name))}
-                  : null,
+              onPressed: isSaveButtomEnabled() ? createTask : null,
               icon: const Icon(Icons.navigate_next),
             ),
             //
@@ -71,9 +85,7 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
                       if (value != "") {
                         //debe aparecer boton de guardar
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(
-                            const Duration(milliseconds: 200),
-                            () => setState(() => enableSaveButton = true));
+                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => enableSaveButton = true));
                         setState(() {
                           name = value; //guarda nombre
                         });
