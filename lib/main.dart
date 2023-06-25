@@ -35,13 +35,9 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData.dark(useMaterial3: true),
       themeMode: ThemeMode.light,
+      debugShowCheckedModeBanner: false,
       title: 'Excluidos Unidos',
       home: const AppAuthWrapper(), //en login.dart primer ventana a abrirse
     );
   }
 }
-
-//      appBar: AppBar(
-//      backgroundColor: Color.fromARGB(255, 166, 3, 243),
-//    title: const Text('Eu!'),
-//  style: TextStyle(fontWeight: FontWeight.bold)

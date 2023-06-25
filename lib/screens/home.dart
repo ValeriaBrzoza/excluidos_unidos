@@ -37,12 +37,12 @@ class _HomePageState extends State<HomePage> {
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.list),
-            label: 'My Lists',
+            label: 'Listas',
           ),
           NavigationDestination(
             //dibujos de abajo
             icon: Icon(Icons.settings),
-            label: 'Settings',
+            label: 'Ajustes',
           )
         ],
       ),

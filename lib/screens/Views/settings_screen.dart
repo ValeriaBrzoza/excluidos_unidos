@@ -23,7 +23,7 @@ class _SettingsViewState extends State<SettingsView> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: const Text('Ajustes')),
       body: SettingsList(
         applicationType: ApplicationType.material,
         platform: DevicePlatform.android,
@@ -75,16 +75,16 @@ class _SettingsViewState extends State<SettingsView> {
                 },
                 initialValue: _toggle,
                 leading: const Icon(Icons.format_paint),
-                title: const Text('Dark Theme'),
+                title: const Text('Modo Oscuro'),
               ),
             ],
           ),
           SettingsSection(
-            title: const Text('About'),
+            title: const Text('Acerca de'),
             tiles: [
               SettingsTile.navigation(
                 leading: const Icon(Icons.webhook),
-                title: const Text('Github Repository'),
+                title: const Text('Repositorio GitHub'),
                 onPressed: (_) {
                   launchUrl(_url);
                 },

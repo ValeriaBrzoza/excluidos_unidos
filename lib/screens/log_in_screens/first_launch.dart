@@ -50,7 +50,7 @@ class LogInPage extends StatelessWidget {
                   children: [
                     LogInButton(
                       //widget propio
-                      text: 'Log in with google',
+                      text: 'Ingresar con google',
                       onPressed: () {
                         if (kIsWeb) {
                           FirebaseAuth.instance.signInWithRedirect(GoogleAuthProvider());
@@ -63,7 +63,7 @@ class LogInPage extends StatelessWidget {
                     const SizedBox(height: 50),
                     LogInButton(
                       //widget propio
-                      text: 'Continue as guest',
+                      text: 'Continuar como invitado',
                       onPressed: () {
                         Navigator.of(context).pushReplacement(MaterialPageRoute(
                           //MaterialPageRoute le da el COMO hacer el cambio de vistas, al navigator

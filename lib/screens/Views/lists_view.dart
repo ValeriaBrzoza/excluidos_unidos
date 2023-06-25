@@ -3,6 +3,7 @@ import 'package:excluidos_unidos/screens/Views/tasklist_creator_view.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
 import 'package:excluidos_unidos/screens/Views/tasklist_view.dart';
 import 'package:excluidos_unidos/models/tasklist.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
 class ListsView extends StatefulWidget {
@@ -12,10 +13,12 @@ class ListsView extends StatefulWidget {
   State<ListsView> createState() => _ListsViewState();
 }
 
+
+
 class _ListsViewState extends State<ListsView> {
   int selectedIndex = 0;
   Stream<List<TaskList>> listsStream = DataProvider.instance.getLists();
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +32,10 @@ class _ListsViewState extends State<ListsView> {
             onPressed: () {},
             icon: const Icon(Icons.search),
           ),
+          IconButton(
+            onPressed: () {} ,
+            icon: const Icon(Icons.sort)
+            ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -46,7 +53,7 @@ class _ListsViewState extends State<ListsView> {
       body: StreamBuilder(
         stream: listsStream,
         builder: (context, snapshot) {
-          print(snapshot);
+          //print(snapshot);
 
           return TaskListListView(lists: snapshot.data ?? []);
         },
@@ -71,12 +78,66 @@ class TaskListListView extends StatelessWidget {
     ));
   }
 
+  Future<void> deleteList(String listId, BuildContext context) async {
+      // Request confirmation
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Eliminar Lista'),
+          content: const Text('¿Estás seguro de que quieres eliminar esta lista?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Eliminar'),
+            ),
+          ],
+        ),
+      );
+
+      // If confirmed, delete task
+      if (confirmed == true) {
+        await DataProvider.instance.deleteList(listId);
+      }
+    }
+
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       //recibe lista de widgets y los muestra en orden scroleable
       itemCount: lists.length,
-      itemBuilder: (context, index) => ListTile(
+      itemBuilder: (context, index) {
+        final list = lists[index];
+        final actionPane = ActionPane(
+          extentRatio: 0.66,
+          motion: const ScrollMotion(),
+          children: [
+            SlidableAction(
+              onPressed: (context) {
+                deleteList(list.id!, context);
+              },
+              label: 'Eliminar',
+              backgroundColor: Colors.red,
+              icon: Icons.clear,
+            ),
+            /* SlidableAction(
+              onPressed: (context) {},
+              label: list.assignedUser != null ? "{nombre}" : 'Asignar',
+              backgroundColor: Colors.grey,
+              icon: list.assignedUser != null ? Icons.person : Icons.person_add,
+            ) */
+          ],
+        );
+
+        return Slidable(
+          key: Key(list.id!),
+          startActionPane: actionPane,
+          endActionPane: actionPane,
+          child: ListTile(
         leading: CircleAvatar(
           //icono de la lista
           child: Icon(lists[index].isShared ? Icons.people : Icons.person),
@@ -88,6 +149,11 @@ class TaskListListView extends StatelessWidget {
           showTaskList(lists[index], context);
         },
       ),
+        );
+      }
     );
   }
 }
+
+
+
