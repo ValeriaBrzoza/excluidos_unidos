@@ -107,4 +107,5 @@ class Task {
   int get hashCode {
     return title.hashCode ^ deadline.hashCode ^ assignedUser.hashCode ^ completed.hashCode;
   }
+
 }

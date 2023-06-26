@@ -60,6 +60,8 @@ class _TaskListViewState extends State<TaskListView> {
     }
   }
 
+
+  //TODO: agregarle animaciones
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<TaskList>(
@@ -71,6 +73,12 @@ class _TaskListViewState extends State<TaskListView> {
           stream: tasksStream,
           builder: (context, snapshot) {
             final tasks = snapshot.data ?? [];
+            tasks.sort((a, b) {
+              if(a.completed) {
+                return 1;
+              }
+              return -1;
+            });
 
             return Scaffold(
               appBar: AppBar(
@@ -84,7 +92,6 @@ class _TaskListViewState extends State<TaskListView> {
                 itemCount: tasks.length,
                 itemBuilder: (context, index) {
                   final task = tasks[index];
-
                   final actionPane = ActionPane(
                     extentRatio: 0.66,
                     motion: const ScrollMotion(),
@@ -111,11 +118,15 @@ class _TaskListViewState extends State<TaskListView> {
                     startActionPane: actionPane,
                     endActionPane: actionPane,
                     child: CheckboxListTile(
-                      title: Text(task.title),
+                      title: Text(task.title,
+                        style: TextStyle(
+                          color: task.completed ?  Colors.grey : null,
+                          decoration: task.completed ? TextDecoration.lineThrough : null),),
                       subtitle: widget.tasksList.tasksLimitDateRequired && task.deadline != null
                           ? Text(DateFormat('dd/MM/yyyy').format(task.deadline!))
                           : null,
                       value: task.completed,
+                      //activeColor: task.completed ?  Colors.grey : null,
                       onChanged: (bool? newValue) {
                         DataProvider.instance.setTaskCompleted(taskList.id!, task.id!, newValue!);
                       },
