@@ -7,25 +7,20 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
 class ListsView extends StatefulWidget {
-  const ListsView({super.key});
+  const ListsView({Key? key}) : super(key: key);
 
   @override
   State<ListsView> createState() => _ListsViewState();
 }
 
-
-
 class _ListsViewState extends State<ListsView> {
-  int selectedIndex = 0;
   Stream<List<TaskList>> listsStream = DataProvider.instance.getLists();
   bool _reversed = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //devuelve vista
       appBar: AppBar(
-        //vista tiene barrita arriba
         title: const Text('Mis Listas'),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         actions: [
@@ -34,40 +29,50 @@ class _ListsViewState extends State<ListsView> {
               showSearch(
                 context: context,
                 delegate: MySearchDelegate(
-                  listsStream : listsStream
-                  ),
+                  listsStream: DataProvider.instance.getLists(),
+                ),
               );
             },
             icon: const Icon(Icons.search),
             tooltip: 'Buscar',
           ),
           IconButton(
-            onPressed: () { setState(() {
-              _reversed = !_reversed;
-            });
-            } ,
+            onPressed: () {
+              setState(() {
+                _reversed = !_reversed;
+              });
+            },
             icon: const Icon(Icons.sort),
             tooltip: 'Ordenar',
-            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        //boton de añadir lista
         onPressed: () async {
-          final newList = await showDialog<TaskList>(context: context, builder: (context) => const TaskListCreatorView());
+          final newList = await showDialog<TaskList>(
+            context: context,
+            builder: (context) => const TaskListCreatorView(),
+          );
 
-          if (newList == null) return; //si no se crea lista, no hace nada (cancela el dialogo)
+          if (newList == null) return;
 
           await DataProvider.instance.addList(newList);
-        }, //formulario de creación de listas
-        child: const Icon(Icons.add), //icono del boton
+        },
+        child: const Icon(Icons.add),
       ),
-      //vista de listas
-      body: StreamBuilder(
-        stream: listsStream,
+      body: StreamBuilder<List<TaskList>>(
+        stream: DataProvider.instance.getLists(),
         builder: (context, snapshot) {
-          //print(snapshot);
-          return TaskListListView(lists: snapshot.data ?? [], reversed: _reversed,);
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (snapshot.hasData) {
+            final lists = snapshot.data!;
+            return TaskListListView(lists: lists, reversed: _reversed);
+          } else {
+            return const Center(child: Text('No data available'));
+          }
         },
       ),
     );
@@ -77,71 +82,83 @@ class _ListsViewState extends State<ListsView> {
 class MySearchDelegate extends SearchDelegate {
   MySearchDelegate({
     required this.listsStream,
-  }); 
+  });
 
   final Stream<List<TaskList>> listsStream;
 
-
-  
-  //TODO: poner la lista bien.
-
-  List<String> searchResults = ['Hola', 'todo', 'bien'];
+  @override
+  List<Widget>? buildActions(BuildContext context) => [
+        IconButton(
+          onPressed: () => close(context, null),
+          icon: const Icon(Icons.clear),
+        ),
+      ];
 
   @override
   Widget? buildLeading(BuildContext context) => IconButton(
-    onPressed: () {
-      if(query.isEmpty) {
-        close(context, null);
-      } else {
-      query = '';
-      }
-    },
-    icon: const Icon(Icons.arrow_back));
+        onPressed: () {
+          if (query.isEmpty) {
+            close(context, null);
+          } else {
+            query = '';
+          }
+        },
+        icon: const Icon(Icons.arrow_back),
+      );
 
-  @override
-  List<Widget>? buildActions(BuildContext context) => [
-    IconButton(
-      onPressed: () => close(context, null),
-      icon: const Icon(Icons.clear))
-  ];
 
-  @override
+//TODO: que entre en la lista buscada 
+//(si escribo el nombre incompleto y apretó enter muestra esa parte y no debería)
+ @override
   Widget buildResults(BuildContext context) => Center(
     child: Text(
       query,
-      style: const TextStyle(fontSize: 64, fontWeight: FontWeight.normal) //TODO: que entre en la lista buscada
+      style: const TextStyle(fontSize: 64, fontWeight: FontWeight.normal) 
     )
   );
 
-
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> suggestions = searchResults.where((searchResult) {
-      final result = searchResult.toLowerCase();
-      final input = query.toLowerCase();
-      return result.contains(input);
-    }).toList();
-    return ListView.builder(
-      itemCount: suggestions.length,
-      itemBuilder: (context, index) {
-        final suggestion = suggestions[index];
-        return ListTile(
-          title: Text(suggestion),
-          onTap: () {
-            query = suggestion;
-            showResults(context);
-          },
-        );
+    return StreamBuilder<List<TaskList>>(
+      stream: listsStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          final searchResults = snapshot.data!
+              .where((taskList) =>
+                  taskList.name.toLowerCase().contains(query.toLowerCase()))
+              .toList();
+
+          return ListView.builder(
+            itemCount: searchResults.length,
+            itemBuilder: (context, index) {
+              final taskList = searchResults[index];
+              return ListTile(
+                title: Text(taskList.name),
+                onTap: () {
+                  query = taskList.name;
+                  showResults(context);
+                },
+              );
+            },
+          );
+        } else {
+          return const Center(child: Text('No data available'));
+        }
       },
     );
-  }}
+  }
+}
 
 class TaskListListView extends StatelessWidget {
   const TaskListListView({
-    super.key,
+    Key? key,
     required this.lists,
     required this.reversed,
-  });
+  }) : super(key: key);
 
   final List<TaskList> lists;
   final bool reversed;
@@ -154,43 +171,39 @@ class TaskListListView extends StatelessWidget {
     ));
   }
 
-
   Future<void> deleteList(String listId, BuildContext context) async {
-      // Request confirmation
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Eliminar Lista'),
-          content: const Text('¿Estás seguro de que quieres eliminar esta lista?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Eliminar'),
-            ),
-          ],
-        ),
-      );
+    // Request confirmation
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar Lista'),
+        content: const Text('¿Estás seguro de que quieres eliminar esta lista?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
 
-      // If confirmed, delete task
-      if (confirmed == true) {
-        await DataProvider.instance.deleteList(listId);
-      }
+    // If confirmed, delete task
+    if (confirmed == true) {
+      await DataProvider.instance.deleteList(listId);
     }
-
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      //recibe lista de widgets y los muestra en orden scroleable
       itemCount: lists.length,
       itemBuilder: (context, index) {
         index = reversed ? index : (lists.length - 1 - index);
         final list = lists[index];
-        
         final actionPane = ActionPane(
           extentRatio: 0.66,
           motion: const ScrollMotion(),
@@ -212,21 +225,20 @@ class TaskListListView extends StatelessWidget {
           endActionPane: actionPane,
           child: ListTile(
             leading: CircleAvatar(
-          //icono de la lista
-            child: Icon(lists[index].isShared ? Icons.people : Icons.person),
-        ),
-        subtitle: lists[index].hasDeadline ? Text(DateFormat('dd/MM/yyyy').format(lists[index].globalDeadline!)) : null,
-        //elemento de la lista con formato de item
-        title: Text(lists[index].name),
-        onTap: () {
-          showTaskList(lists[index], context);
-        },
-      ),
+              child: Icon(
+                  lists[index].isShared ? Icons.people : Icons.person),
+            ),
+            subtitle: lists[index].hasDeadline
+                ? Text(DateFormat('dd/MM/yyyy')
+                    .format(lists[index].globalDeadline!))
+                : null,
+            title: Text(lists[index].name),
+            onTap: () {
+              showTaskList(lists[index], context);
+            },
+          ),
         );
-      }
+      },
     );
   }
 }
-
-
-
