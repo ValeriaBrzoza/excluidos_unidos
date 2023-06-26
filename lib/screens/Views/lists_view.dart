@@ -18,7 +18,8 @@ class ListsView extends StatefulWidget {
 class _ListsViewState extends State<ListsView> {
   int selectedIndex = 0;
   Stream<List<TaskList>> listsStream = DataProvider.instance.getLists();
-  
+  bool _reversed = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,10 +39,15 @@ class _ListsViewState extends State<ListsView> {
               );
             },
             icon: const Icon(Icons.search),
+            tooltip: 'Buscar',
           ),
           IconButton(
-            onPressed: () {} ,
-            icon: const Icon(Icons.sort)
+            onPressed: () { setState(() {
+              _reversed = !_reversed;
+            });
+            } ,
+            icon: const Icon(Icons.sort),
+            tooltip: 'Ordenar',
             ),
         ],
       ),
@@ -61,7 +67,7 @@ class _ListsViewState extends State<ListsView> {
         stream: listsStream,
         builder: (context, snapshot) {
           //print(snapshot);
-          return TaskListListView(lists: snapshot.data ?? []);
+          return TaskListListView(lists: snapshot.data ?? [], reversed: _reversed,);
         },
       ),
     );
@@ -74,6 +80,8 @@ class MySearchDelegate extends SearchDelegate {
   }); 
 
   final Stream<List<TaskList>> listsStream;
+
+
   
   //TODO: poner la lista bien.
 
@@ -111,11 +119,8 @@ class MySearchDelegate extends SearchDelegate {
     List<String> suggestions = searchResults.where((searchResult) {
       final result = searchResult.toLowerCase();
       final input = query.toLowerCase();
-
       return result.contains(input);
     }).toList();
-
-
     return ListView.builder(
       itemCount: suggestions.length,
       itemBuilder: (context, index) {
@@ -135,9 +140,11 @@ class TaskListListView extends StatelessWidget {
   const TaskListListView({
     super.key,
     required this.lists,
+    required this.reversed,
   });
 
   final List<TaskList> lists;
+  final bool reversed;
 
   void showTaskList(TaskList list, BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
@@ -146,6 +153,7 @@ class TaskListListView extends StatelessWidget {
       ),
     ));
   }
+
 
   Future<void> deleteList(String listId, BuildContext context) async {
       // Request confirmation
@@ -180,7 +188,9 @@ class TaskListListView extends StatelessWidget {
       //recibe lista de widgets y los muestra en orden scroleable
       itemCount: lists.length,
       itemBuilder: (context, index) {
+        index = reversed ? index : (lists.length - 1 - index);
         final list = lists[index];
+        
         final actionPane = ActionPane(
           extentRatio: 0.66,
           motion: const ScrollMotion(),
@@ -193,12 +203,6 @@ class TaskListListView extends StatelessWidget {
               backgroundColor: Colors.red,
               icon: Icons.clear,
             ),
-            /* SlidableAction(
-              onPressed: (context) {},
-              label: list.assignedUser != null ? "{nombre}" : 'Asignar',
-              backgroundColor: Colors.grey,
-              icon: list.assignedUser != null ? Icons.person : Icons.person_add,
-            ) */
           ],
         );
 
@@ -207,9 +211,9 @@ class TaskListListView extends StatelessWidget {
           startActionPane: actionPane,
           endActionPane: actionPane,
           child: ListTile(
-        leading: CircleAvatar(
+            leading: CircleAvatar(
           //icono de la lista
-          child: Icon(lists[index].isShared ? Icons.people : Icons.person),
+            child: Icon(lists[index].isShared ? Icons.people : Icons.person),
         ),
         subtitle: lists[index].hasDeadline ? Text(DateFormat('dd/MM/yyyy').format(lists[index].globalDeadline!)) : null,
         //elemento de la lista con formato de item
