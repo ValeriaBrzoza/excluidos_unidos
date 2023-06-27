@@ -117,15 +117,18 @@ class _TaskListViewState extends State<TaskListView> {
                         backgroundColor: Colors.red,
                         icon: Icons.clear,
                       ),
-                      SlidableAction(
-                        onPressed: (context) {},
-                        label:
-                            task.assignedUser != null ? "{nombre}" : 'Asignar',
-                        backgroundColor: Colors.grey,
-                        icon: task.assignedUser != null
-                            ? Icons.person
-                            : Icons.person_add,
-                      )
+                      Visibility(
+                          visible: taskList.isShared,
+                          child: SlidableAction(
+                            onPressed: (context) {},
+                            label: task.assignedUser != null
+                                ? "{nombre}"
+                                : 'Asignar',
+                            backgroundColor: Colors.grey,
+                            icon: task.assignedUser != null
+                                ? Icons.person
+                                : Icons.person_add,
+                          ))
                     ],
                   );
 
