@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/screens/Views/tasklist_creator_view.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
@@ -14,7 +15,8 @@ class ListsView extends StatefulWidget {
 }
 
 class _ListsViewState extends State<ListsView> {
-  Stream<List<TaskList>> listsStream = DataProvider.instance.getLists();
+  Stream<List<TaskList>> listsStream =
+      DataProvider.instance.getLists(FirebaseAuth.instance.currentUser!.uid);
   bool _reversed = false;
 
   @override
@@ -65,7 +67,8 @@ class _ListsViewState extends State<ListsView> {
               child: const Icon(Icons.add),
             ),
             body: StreamBuilder<List<TaskList>>(
-              stream: DataProvider.instance.getLists(),
+              stream: DataProvider.instance
+                  .getLists(FirebaseAuth.instance.currentUser!.uid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

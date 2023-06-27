@@ -89,7 +89,7 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
                     },
                     decoration: const InputDecoration(
                       //visual del textfield
-                      labelText: 'Nombre de la lista',
+                      labelText: 'Nombre de la tarea',
                       filled: true,
                     ),
                   ),
@@ -97,14 +97,18 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(deadline != null ? DateFormat('dd MMMM y').format(deadline!) : 'Fecha'),
+                        Text(deadline != null
+                            ? DateFormat('dd MMMM y').format(deadline!)
+                            : 'Fecha'),
                         IconButton(
                           onPressed: () async {
                             final date = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
                               firstDate: DateTime.now(),
-                              lastDate: widget.tasksList.globalDeadline ?? DateTime.now().add(const Duration(days: 365 * 10)),
+                              lastDate: widget.tasksList.globalDeadline ??
+                                  DateTime.now()
+                                      .add(const Duration(days: 365 * 10)),
                             );
                             setState(() {
                               deadline = date;
