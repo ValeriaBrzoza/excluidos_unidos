@@ -25,7 +25,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
 
   bool isSupervised = false;
 
-  List<String> user = [FirebaseAuth.instance.currentUser!.uid];
+  List<String> usersId = [FirebaseAuth.instance.currentUser!.uid];
 
   bool tasksLimitDateRequired = false;
 
@@ -53,7 +53,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
     Navigator.of(context).pop(
       TaskList(
         name: name,
-        usersIds: user, //como solucionamos esto?
+        usersIds: usersId, //como solucionamos esto?
         isShared: isShared,
         supervisorsIds: [FirebaseAuth.instance.currentUser!.uid],
         tasksLimitDateRequired: tasksLimitDateRequired,
@@ -153,7 +153,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                           final List<String> users = await showDialog(
                               context: context,
                               builder: (context) => SearchUsers());
-                          //user.add()
+                          usersId.addAll(users);
                         }
                       }),
                   CustomSwitchListTile(
