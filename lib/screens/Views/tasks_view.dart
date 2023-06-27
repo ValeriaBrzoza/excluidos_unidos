@@ -40,7 +40,8 @@ class _TaskListViewState extends State<TaskListView> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Eliminar tarea'),
-        content: const Text('¿Estás seguro de que quieres eliminar esta tarea?'),
+        content:
+            const Text('¿Estás seguro de que quieres eliminar esta tarea?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -60,7 +61,6 @@ class _TaskListViewState extends State<TaskListView> {
     }
   }
 
-
   //TODO: agregarle animaciones
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class _TaskListViewState extends State<TaskListView> {
           builder: (context, snapshot) {
             final tasks = snapshot.data ?? [];
             tasks.sort((a, b) {
-              if(a.completed) {
+              if (a.completed) {
                 return 1;
               }
               return -1;
@@ -84,18 +84,16 @@ class _TaskListViewState extends State<TaskListView> {
               appBar: AppBar(
                 title: Text(taskList.name),
                 actions: [
-                   IconButton(
-                   onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: TaskSearchDelegate(
-                        taskLists: tasks,
-                        listTask: taskList
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.search),
-                  tooltip: 'Buscar',
+                  IconButton(
+                    onPressed: () {
+                      showSearch(
+                        context: context,
+                        delegate: TaskSearchDelegate(
+                            taskLists: tasks, listTask: taskList),
+                      );
+                    },
+                    icon: const Icon(Icons.search),
+                    tooltip: 'Buscar',
                   ),
                 ],
               ),
@@ -121,9 +119,12 @@ class _TaskListViewState extends State<TaskListView> {
                       ),
                       SlidableAction(
                         onPressed: (context) {},
-                        label: task.assignedUser != null ? "{nombre}" : 'Asignar',
+                        label:
+                            task.assignedUser != null ? "{nombre}" : 'Asignar',
                         backgroundColor: Colors.grey,
-                        icon: task.assignedUser != null ? Icons.person : Icons.person_add,
+                        icon: task.assignedUser != null
+                            ? Icons.person
+                            : Icons.person_add,
                       )
                     ],
                   );
@@ -133,16 +134,23 @@ class _TaskListViewState extends State<TaskListView> {
                     startActionPane: actionPane,
                     endActionPane: actionPane,
                     child: CheckboxListTile(
-                      title: Text(task.title,
+                      title: Text(
+                        task.title,
                         style: TextStyle(
-                          color: task.completed ?  Colors.grey : null,
-                          decoration: task.completed ? TextDecoration.lineThrough : null),),
-                      subtitle: widget.tasksList.tasksLimitDateRequired && task.deadline != null
-                          ? Text(DateFormat('dd/MM/yyyy').format(task.deadline!))
+                            color: task.completed ? Colors.grey : null,
+                            decoration: task.completed
+                                ? TextDecoration.lineThrough
+                                : null),
+                      ),
+                      subtitle: widget.tasksList.tasksLimitDateRequired &&
+                              task.deadline != null
+                          ? Text(
+                              DateFormat('dd/MM/yyyy').format(task.deadline!))
                           : null,
                       value: task.completed,
                       onChanged: (bool? newValue) {
-                        DataProvider.instance.setTaskCompleted(taskList.id!, task.id!, newValue!);
+                        DataProvider.instance.setTaskCompleted(
+                            taskList.id!, task.id!, newValue!);
                       },
                     ),
                   );
@@ -156,7 +164,6 @@ class _TaskListViewState extends State<TaskListView> {
   }
 }
 
-
 class TaskSearchDelegate extends SearchDelegate {
   TaskSearchDelegate({
     required this.taskLists,
@@ -165,7 +172,6 @@ class TaskSearchDelegate extends SearchDelegate {
 
   final List<Task> taskLists;
   final TaskList listTask;
-
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
@@ -187,9 +193,8 @@ class TaskSearchDelegate extends SearchDelegate {
         icon: const Icon(Icons.arrow_back),
       );
 
-
-@override
-Widget buildResults(BuildContext context) { 
+  @override
+  Widget buildResults(BuildContext context) {
     List<Task> suggestions = taskLists.where((searchResult) {
       final result = searchResult.title.toLowerCase();
       final input = query.toLowerCase();
@@ -205,18 +210,22 @@ Widget buildResults(BuildContext context) {
           title: Row(
             children: [
               Expanded(
-                child: Text(suggestion.title,
-                style: TextStyle(
-                          color: suggestion.completed ?  Colors.grey : null,
-                          decoration: suggestion.completed ? TextDecoration.lineThrough : null),),
+                child: Text(
+                  suggestion.title,
+                  style: TextStyle(
+                      color: suggestion.completed ? Colors.grey : null,
+                      decoration: suggestion.completed
+                          ? TextDecoration.lineThrough
+                          : null),
+                ),
               ),
               Checkbox(
-                value: suggestion.completed,
-                onChanged: (bool? newValue) {
-                  DataProvider.instance.setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
-                  close(context, null);
-              }
-              )
+                  value: suggestion.completed,
+                  onChanged: (bool? newValue) {
+                    DataProvider.instance.setTaskCompleted(
+                        listTask.id!, suggestion.id!, newValue!);
+                    close(context, null);
+                  })
             ],
           ),
         );
@@ -224,7 +233,7 @@ Widget buildResults(BuildContext context) {
     );
   }
 
-@override
+  @override
   Widget buildSuggestions(BuildContext context) {
     List<Task> suggestions = taskLists.where((searchResult) {
       final result = searchResult.title.toLowerCase();
@@ -241,18 +250,22 @@ Widget buildResults(BuildContext context) {
           title: Row(
             children: [
               Expanded(
-                child: Text(suggestion.title,
-                style: TextStyle(
-                          color: suggestion.completed ?  Colors.grey : null,
-                          decoration: suggestion.completed ? TextDecoration.lineThrough : null),),
+                child: Text(
+                  suggestion.title,
+                  style: TextStyle(
+                      color: suggestion.completed ? Colors.grey : null,
+                      decoration: suggestion.completed
+                          ? TextDecoration.lineThrough
+                          : null),
+                ),
               ),
               Checkbox(
-                value: suggestion.completed,
-                onChanged: (bool? newValue) {
-                  DataProvider.instance.setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
-                  close(context, null);
-              }
-              )
+                  value: suggestion.completed,
+                  onChanged: (bool? newValue) {
+                    DataProvider.instance.setTaskCompleted(
+                        listTask.id!, suggestion.id!, newValue!);
+                    close(context, null);
+                  })
             ],
           ),
         );

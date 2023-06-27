@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/screens/Views/tasklist_creator_view.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
-import 'package:excluidos_unidos/screens/Views/tasklist_view.dart';
+import 'package:excluidos_unidos/screens/Views/tasks_view.dart';
 import 'package:excluidos_unidos/models/tasklist.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -20,68 +20,68 @@ class _ListsViewState extends State<ListsView> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-          stream: listsStream,
-          builder: (context, snapshot) {
-            final tasksList = snapshot.data ?? [];
-      return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mis Listas'),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        actions: [
-          IconButton(
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: ListSearchDelegate(
-                  listsStream: tasksList,
-                ),
-              );
-            },
-            icon: const Icon(Icons.search),
-            tooltip: 'Buscar',
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _reversed = !_reversed;
-              });
-            },
-            icon: const Icon(Icons.sort),
-            tooltip: 'Ordenar',
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final newList = await showDialog<TaskList>(
-            context: context,
-            builder: (context) => const TaskListCreatorView(),
-          );
-
-          if (newList == null) return;
-
-          await DataProvider.instance.addList(newList);
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: StreamBuilder<List<TaskList>>(
-        stream: DataProvider.instance.getLists(),
+        stream: listsStream,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else if (snapshot.hasData) {
-            final lists = snapshot.data!;
-            return TaskListListView(lists: lists, reversed: _reversed);
-          } else {
-            return const Center(child: Text('No data available'));
-          }
-        },
-      ),
-    );
-  } );
-}
+          final tasksList = snapshot.data ?? [];
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Mis Listas'),
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: ListSearchDelegate(
+                        listsStream: tasksList,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.search),
+                  tooltip: 'Buscar',
+                ),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _reversed = !_reversed;
+                    });
+                  },
+                  icon: const Icon(Icons.sort),
+                  tooltip: 'Ordenar',
+                ),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async {
+                final newList = await showDialog<TaskList>(
+                  context: context,
+                  builder: (context) => const TaskListCreatorView(),
+                );
+
+                if (newList == null) return;
+
+                await DataProvider.instance.addList(newList);
+              },
+              child: const Icon(Icons.add),
+            ),
+            body: StreamBuilder<List<TaskList>>(
+              stream: DataProvider.instance.getLists(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  final lists = snapshot.data!;
+                  return TaskListListView(lists: lists, reversed: _reversed);
+                } else {
+                  return const Center(child: Text('No data available'));
+                }
+              },
+            ),
+          );
+        });
+  }
 }
 
 class ListSearchDelegate extends SearchDelegate {
@@ -113,7 +113,8 @@ class ListSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    final searchResults = listsStream.where((taskList) =>
+    final searchResults = listsStream
+        .where((taskList) =>
             taskList.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
@@ -137,10 +138,10 @@ class ListSearchDelegate extends SearchDelegate {
     );
   }
 
-
   @override
   Widget buildSuggestions(BuildContext context) {
-    final searchResults = listsStream.where((taskList) =>
+    final searchResults = listsStream
+        .where((taskList) =>
             taskList.name.toLowerCase().contains(query.toLowerCase()))
         .toList();
 
@@ -189,7 +190,8 @@ class TaskListListView extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Eliminar Lista'),
-        content: const Text('¿Estás seguro de que quieres eliminar esta lista?'),
+        content:
+            const Text('¿Estás seguro de que quieres eliminar esta lista?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -228,6 +230,17 @@ class TaskListListView extends StatelessWidget {
               backgroundColor: Colors.red,
               icon: Icons.clear,
             ),
+            Visibility(
+              visible: list.isShared,
+              child: SlidableAction(
+                onPressed: (context) {
+                  deleteList(list.id!, context);
+                },
+                label: 'Añadir',
+                backgroundColor: Colors.grey,
+                icon: Icons.supervised_user_circle_rounded,
+              ),
+            )
           ],
         );
 
@@ -237,8 +250,7 @@ class TaskListListView extends StatelessWidget {
           endActionPane: actionPane,
           child: ListTile(
             leading: CircleAvatar(
-              child: Icon(
-                  lists[index].isShared ? Icons.people : Icons.person),
+              child: Icon(lists[index].isShared ? Icons.people : Icons.person),
             ),
             subtitle: lists[index].hasDeadline
                 ? Text(DateFormat('dd/MM/yyyy')
