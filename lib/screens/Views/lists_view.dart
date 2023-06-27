@@ -19,7 +19,11 @@ class _ListsViewState extends State<ListsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return StreamBuilder(
+          stream: listsStream,
+          builder: (context, snapshot) {
+            final tasksList = snapshot.data ?? [];
+      return Scaffold(
       appBar: AppBar(
         title: const Text('Mis Listas'),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -29,7 +33,7 @@ class _ListsViewState extends State<ListsView> {
               showSearch(
                 context: context,
                 delegate: ListSearchDelegate(
-                  listsStream: DataProvider.instance.getLists(),
+                  listsStream: tasksList,
                 ),
               );
             },
@@ -76,7 +80,8 @@ class _ListsViewState extends State<ListsView> {
         },
       ),
     );
-  }
+  } );
+}
 }
 
 class ListSearchDelegate extends SearchDelegate {
@@ -84,7 +89,7 @@ class ListSearchDelegate extends SearchDelegate {
     required this.listsStream,
   });
 
-  final Stream<List<TaskList>> listsStream;
+  final List<TaskList> listsStream;
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
@@ -106,48 +111,55 @@ class ListSearchDelegate extends SearchDelegate {
         icon: const Icon(Icons.arrow_back),
       );
 
+  @override
+  Widget buildResults(BuildContext context) {
+    final searchResults = listsStream.where((taskList) =>
+            taskList.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
 
-//TODO: que entre en la lista buscada 
-//(si escribo el nombre incompleto y apretó enter muestra esa parte y no debería)
- @override
-  Widget buildResults(BuildContext context) => Center(
-    child: Text(
-      query,
-      style: const TextStyle(fontSize: 64, fontWeight: FontWeight.normal) 
-    )
-  );
+    return ListView.builder(
+      itemCount: searchResults.length,
+      itemBuilder: (context, index) {
+        final taskList = searchResults[index];
+        return ListTile(
+          title: Text(taskList.name),
+          onTap: () {
+            query = taskList.name;
+            close(context, null);
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => TaskListView(
+                tasksList: taskList,
+              ),
+            ));
+          },
+        );
+      },
+    );
+  }
+
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return StreamBuilder(
-      stream: listsStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData) {
-          final searchResults = snapshot.data!
-              .where((taskList) =>
-                  taskList.name.toLowerCase().contains(query.toLowerCase()))
-              .toList();
+    final searchResults = listsStream.where((taskList) =>
+            taskList.name.toLowerCase().contains(query.toLowerCase()))
+        .toList();
 
-          return ListView.builder(
-            itemCount: searchResults.length,
-            itemBuilder: (context, index) {
-              final taskList = searchResults[index];
-              return ListTile(
-                title: Text(taskList.name),
-                onTap: () {
-                  query = taskList.name;
-                  showResults(context);
-                },
-              );
-            },
-          );
-        } else {
-          return const Center(child: Text('No data available'));
-        }
+    return ListView.builder(
+      itemCount: searchResults.length,
+      itemBuilder: (context, index) {
+        final taskList = searchResults[index];
+        return ListTile(
+          title: Text(taskList.name),
+          onTap: () {
+            query = taskList.name;
+            close(context, null);
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => TaskListView(
+                tasksList: taskList,
+              ),
+            ));
+          },
+        );
       },
     );
   }
