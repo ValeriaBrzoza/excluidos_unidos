@@ -109,7 +109,17 @@ class DataProvider {
         .collection('users')
         .where('email', isEqualTo: email)
         .get();
+    if (user.docs.length == 0) return null;
     return ShareableUser.fromJson(user.docs.first.data(), user.docs.first.id);
+  }
+
+  Future<bool> existeUsuario(String email) async {
+    final user = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
+    if (user.docs.length == 0) return false;
+    return true;
   }
 
   static DataProvider get instance {
@@ -130,6 +140,12 @@ class DataProviderGuest implements DataProvider {
 
   @override
   Future<void> addTaskToTaskList(String listId, Task task) {
+    // TODO: implement addTaskToTaskList
+    throw UnimplementedError();
+  }
+
+  @override //borrar
+  Future<bool> existeUsuario(String email) {
     // TODO: implement addTaskToTaskList
     throw UnimplementedError();
   }

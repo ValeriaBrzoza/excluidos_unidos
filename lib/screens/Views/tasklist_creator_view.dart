@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:excluidos_unidos/models/tasklist.dart';
+import 'package:excluidos_unidos/screens/Views/search_users_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/widgets/switch_list_tile.dart';
@@ -23,6 +24,8 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
   bool isShared = false;
 
   bool isSupervised = false;
+
+  List<String> user = [FirebaseAuth.instance.currentUser!.uid];
 
   bool tasksLimitDateRequired = false;
 
@@ -50,9 +53,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
     Navigator.of(context).pop(
       TaskList(
         name: name,
-        usersIds: [
-          FirebaseAuth.instance.currentUser!.uid,
-        ], //como solucionamos esto?
+        usersIds: user, //como solucionamos esto?
         isShared: isShared,
         supervisorsIds: [FirebaseAuth.instance.currentUser!.uid],
         tasksLimitDateRequired: tasksLimitDateRequired,
@@ -118,7 +119,9 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       if (value != "") {
                         //debe aparecer boton de guardar
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => enableSaveButton = true));
+                        showSaveButtonTimer = Timer(
+                            const Duration(milliseconds: 200),
+                            () => setState(() => enableSaveButton = true));
                         setState(() {
                           name = value; //guarda nombre
                         });
@@ -137,17 +140,22 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     ),
                   ),
                   CustomSwitchListTile(
-                    //barrita swichiable propia
-                    label: 'Compartir lista',
-                    value: isShared,
-                    onTap: isShared ? () {} : null,
-                    description: "Juan Carlos, Pepito y cinco más",
-                    onChanged: (value) {
-                      setState(() {
-                        isShared = value;
-                      });
-                    },
-                  ),
+                      //barrita swichiable propia
+                      label: 'Compartir lista',
+                      value: isShared,
+                      onTap: isShared ? () {} : null,
+                      description: "Juan Carlos, Pepito y cinco más",
+                      onChanged: (value) async {
+                        setState(() {
+                          isShared = value;
+                        });
+                        if (isShared) {
+                          final List<String> users = await showDialog(
+                              context: context,
+                              builder: (context) => SearchUsers());
+                          //user.add()
+                        }
+                      }),
                   CustomSwitchListTile(
                     //barrita swichiable propia
                     label: 'Lista supervisada',
@@ -175,7 +183,9 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     //barrita swichiable propia
                     label: 'Fecha máxima global',
                     value: globalDeadLine != null,
-                    description: globalDeadLine != null ? DateFormat('dd MMMM y').format(globalDeadLine!) : null,
+                    description: globalDeadLine != null
+                        ? DateFormat('dd MMMM y').format(globalDeadLine!)
+                        : null,
                     onChanged: tasksLimitDateRequired //si fecha limite de tareas
                         ? (value) {
                             if (value == false) {
