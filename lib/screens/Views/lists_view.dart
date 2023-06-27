@@ -28,7 +28,7 @@ class _ListsViewState extends State<ListsView> {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: MySearchDelegate(
+                delegate: ListSearchDelegate(
                   listsStream: DataProvider.instance.getLists(),
                 ),
               );
@@ -79,8 +79,8 @@ class _ListsViewState extends State<ListsView> {
   }
 }
 
-class MySearchDelegate extends SearchDelegate {
-  MySearchDelegate({
+class ListSearchDelegate extends SearchDelegate {
+  ListSearchDelegate({
     required this.listsStream,
   });
 
@@ -119,7 +119,7 @@ class MySearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return StreamBuilder<List<TaskList>>(
+    return StreamBuilder(
       stream: listsStream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

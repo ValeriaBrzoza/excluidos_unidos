@@ -83,6 +83,21 @@ class _TaskListViewState extends State<TaskListView> {
             return Scaffold(
               appBar: AppBar(
                 title: Text(taskList.name),
+                actions: [
+                   IconButton(
+                   onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: TaskSearchDelegate(
+                        taskLists: tasks,
+                        listTask: taskList
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.search),
+                  tooltip: 'Buscar',
+                  ),
+                ],
               ),
               floatingActionButton: FloatingActionButton(
                 onPressed: showAddTaskDialog, //te lleva a otra vista
@@ -126,7 +141,6 @@ class _TaskListViewState extends State<TaskListView> {
                           ? Text(DateFormat('dd/MM/yyyy').format(task.deadline!))
                           : null,
                       value: task.completed,
-                      //activeColor: task.completed ?  Colors.grey : null,
                       onChanged: (bool? newValue) {
                         DataProvider.instance.setTaskCompleted(taskList.id!, task.id!, newValue!);
                       },
@@ -136,6 +150,111 @@ class _TaskListViewState extends State<TaskListView> {
               ),
             );
           },
+        );
+      },
+    );
+  }
+}
+
+
+class TaskSearchDelegate extends SearchDelegate {
+  TaskSearchDelegate({
+    required this.taskLists,
+    required this.listTask,
+  });
+
+  final List<Task> taskLists;
+  final TaskList listTask;
+
+
+  @override
+  List<Widget>? buildActions(BuildContext context) => [
+        IconButton(
+          onPressed: () => close(context, null),
+          icon: const Icon(Icons.clear),
+        ),
+      ];
+
+  @override
+  Widget? buildLeading(BuildContext context) => IconButton(
+        onPressed: () {
+          if (query.isEmpty) {
+            close(context, null);
+          } else {
+            query = '';
+          }
+        },
+        icon: const Icon(Icons.arrow_back),
+      );
+
+
+@override
+Widget buildResults(BuildContext context) { 
+    List<Task> suggestions = taskLists.where((searchResult) {
+      final result = searchResult.title.toLowerCase();
+      final input = query.toLowerCase();
+
+      return result.contains(input);
+    }).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        var suggestion = suggestions[index];
+        return ListTile(
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(suggestion.title,
+                style: TextStyle(
+                          color: suggestion.completed ?  Colors.grey : null,
+                          decoration: suggestion.completed ? TextDecoration.lineThrough : null),),
+              ),
+              Checkbox(
+                value: suggestion.completed,
+                onChanged: (bool? newValue) {
+                  DataProvider.instance.setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
+                  close(context, null);
+              }
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+@override
+  Widget buildSuggestions(BuildContext context) {
+    List<Task> suggestions = taskLists.where((searchResult) {
+      final result = searchResult.title.toLowerCase();
+      final input = query.toLowerCase();
+
+      return result.contains(input);
+    }).toList();
+
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final suggestion = suggestions[index];
+        return ListTile(
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(suggestion.title,
+                style: TextStyle(
+                          color: suggestion.completed ?  Colors.grey : null,
+                          decoration: suggestion.completed ? TextDecoration.lineThrough : null),),
+              ),
+              Checkbox(
+                value: suggestion.completed,
+                onChanged: (bool? newValue) {
+                  DataProvider.instance.setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
+                  close(context, null);
+              }
+              )
+            ],
+          ),
         );
       },
     );

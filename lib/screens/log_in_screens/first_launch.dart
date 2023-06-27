@@ -50,7 +50,7 @@ class LogInPage extends StatelessWidget {
                   children: [
                     LogInButton(
                       //widget propio
-                      text: 'Ingresar con google',
+                      text: 'Ingresar con Google',
                       onPressed: () {
                         if (kIsWeb) {
                           FirebaseAuth.instance.signInWithRedirect(GoogleAuthProvider());
