@@ -144,7 +144,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       label: 'Compartir lista',
                       value: isShared,
                       onTap: isShared ? () {} : null,
-                      description: "Juan Carlos, Pepito y cinco más",
+                      description: 'Agregar Usuarios',
                       onChanged: (value) async {
                         setState(() {
                           isShared = value;
@@ -152,7 +152,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                         if (isShared) {
                           final List<String> users = await showDialog(
                               context: context,
-                              builder: (context) => SearchUsers());
+                              builder: (context) => const SearchUsers());
                           usersId.addAll(users);
                         }
                       }),

@@ -21,7 +21,7 @@ class _SearchUsersState extends State<SearchUsers> {
 
   List<ShareableUser> usersToAdd = [];
 
-  bool isAddButtonEnabled() {
+  bool isAddUserButtonEnabled() {
     return enableAddButton;
   }
 
@@ -45,7 +45,11 @@ class _SearchUsersState extends State<SearchUsers> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: null, //isSaveButtomEnabled() ? complete : null,
+                    onPressed: usersToAdd.isNotEmpty
+                        ? () {
+                            Navigator.of(context).pop(usersToAdd);
+                          }
+                        : null,
                     icon: const Icon(Icons.navigate_next),
                     label: const Text("Agregar"),
                   )
@@ -81,9 +85,11 @@ class _SearchUsersState extends State<SearchUsers> {
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    onPressed: isAddButtonEnabled()
+                    onPressed: isAddUserButtonEnabled()
                         ? () {
-                            usersToAdd.add(userToAdd!);
+                            setState(() {
+                              usersToAdd.add(userToAdd!);
+                            });
                           }
                         : null,
                     child: const SizedBox(
@@ -93,6 +99,22 @@ class _SearchUsersState extends State<SearchUsers> {
                         child: Text('Add'),
                       ),
                     ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: usersToAdd.length,
+                    itemBuilder: (context, index) {
+                      return CheckboxListTile(
+                        value: true,
+                        onChanged: (value) {
+                          setState(() {
+                            value = false;
+                          });
+                        },
+                        title: Text(usersToAdd[index].email),
+                      );
+                    },
                   ),
                 ),
               ],
