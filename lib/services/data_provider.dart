@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excluidos_unidos/models/tasks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -113,13 +115,9 @@ class DataProvider {
     return ShareableUser.fromJson(user.docs.first.data(), user.docs.first.id);
   }
 
-  Future<bool> existeUsuario(String email) async {
-    final user = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
-    if (user.docs.length == 0) return false;
-    return true;
+  Future<bool> foundUser(String email) async {
+    final ShareableUser? userFound = await searchForUser(email);
+    return userFound != null;
   }
 
   static DataProvider get instance {
@@ -140,12 +138,6 @@ class DataProviderGuest implements DataProvider {
 
   @override
   Future<void> addTaskToTaskList(String listId, Task task) {
-    // TODO: implement addTaskToTaskList
-    throw UnimplementedError();
-  }
-
-  @override //borrar
-  Future<bool> existeUsuario(String email) {
     // TODO: implement addTaskToTaskList
     throw UnimplementedError();
   }
@@ -195,6 +187,12 @@ class DataProviderGuest implements DataProvider {
   @override
   Future<ShareableUser?> searchForUser(String email) {
     // TODO: implement searchForUser
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> foundUser(String email) async {
+    //TODO: implement updateUserData
     throw UnimplementedError();
   }
 

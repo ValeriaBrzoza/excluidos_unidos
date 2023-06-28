@@ -15,9 +15,13 @@ class SearchUsers extends StatefulWidget {
 class _SearchUsersState extends State<SearchUsers> {
   bool enableAddButton = false;
 
+  ShareableUser? userToAdd;
+
   Timer? showAddButtonTimer;
 
-  bool isAddButtonEnable() {
+  List<ShareableUser> usersToAdd = [];
+
+  bool isAddButtonEnabled() {
     return enableAddButton;
   }
 
@@ -52,12 +56,21 @@ class _SearchUsersState extends State<SearchUsers> {
               children: [
                 TextField(
                   //recuadro de texto para el nombre de la lista
-
-                  onChanged: (value) {
-                    setState(() {
-                      var email = value;
-                      print(DataProvider.instance.existeUsuario(email));
-                    });
+                  onChanged: (email) async {
+                    final userFound =
+                        await DataProvider.instance.searchForUser(email);
+                    setState(
+                      () {
+                        if (userFound != null) {
+                          userToAdd = userFound;
+                          enableAddButton = true;
+                        } else {
+                          userToAdd = null;
+                          enableAddButton = false;
+                        }
+                        ;
+                      },
+                    );
                   },
                   decoration: const InputDecoration(
                     //visual del textfield
@@ -65,9 +78,23 @@ class _SearchUsersState extends State<SearchUsers> {
                     filled: true,
                   ),
                 ),
-                FloatingActionButton(
-                  onPressed: isAddButtonEnable() ? () {} : null,
-                )
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: isAddButtonEnabled()
+                        ? () {
+                            usersToAdd.add(userToAdd!);
+                          }
+                        : null,
+                    child: const SizedBox(
+                      height: 20,
+                      width: 60,
+                      child: Center(
+                        child: Text('Add'),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -76,84 +103,3 @@ class _SearchUsersState extends State<SearchUsers> {
     );
   }
 }
-/*
-class UserSearchDelegate extends SearchDelegate {
-  UserSearchDelegate({
-    required this.usersList,
-  });
-
-  final List<String> usersList;
-
-  @override
-  List<Widget>? buildActions(BuildContext context) => [
-        IconButton(
-          onPressed: () => close(context, null),
-          icon: const Icon(Icons.clear),
-        ),
-      ];
-
-  @override
-  Widget? buildLeading(BuildContext context) => IconButton(
-        onPressed: () {
-          if (query.isEmpty) {
-            close(context, null);
-          } else {
-            query = '';
-          }
-        },
-        icon: const Icon(Icons.arrow_back),
-      );
-
-  @override
-  Widget buildResults(BuildContext context) {
-    final searchResults = usersList
-        .where((user) => user.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    return ListView.builder(
-      itemCount: searchResults.length,
-      itemBuilder: (context, index) {
-        final user = searchResults[index];
-        return ListTile(
-          title: Text(user),
-          onTap: () {
-/*             query = taskList.name;
-            close(context, null);
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => TaskListView(
-                tasksList: taskList,
-              ), 
-            ));*/
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    final searchResults = usersList
-        .where((user) => user.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-
-    return ListView.builder(
-      itemCount: searchResults.length,
-      itemBuilder: (context, index) {
-        final taskList = searchResults[index];
-        return ListTile(
-          title: Text(taskList),
-          onTap: () {
-            /* query = taskList.name;
-            close(context, null);
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => TaskListView(
-                tasksList: taskList,
-              ),
-            )); */
-          },
-        );
-      },
-    );
-  }
-}
-*/
