@@ -1,3 +1,4 @@
+import 'package:excluidos_unidos/screens/Views/search_users_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/screens/Views/tasklist_creator_view.dart';
@@ -236,8 +237,12 @@ class TaskListListView extends StatelessWidget {
             Visibility(
               visible: list.isShared,
               child: SlidableAction(
-                onPressed: (context) {
-                  deleteList(list.id!, context);
+                onPressed: (context) async {
+                  final List<String> newlyAddedUsers = await showDialog(
+                    context: context,
+                    builder: (context) => SearchUsers(),
+                  );
+                  //addUsersToList(list.Id!, newlyAddedUsers);  ---> falta hacer esta funcion
                 },
                 label: 'Añadir',
                 backgroundColor: Colors.grey,

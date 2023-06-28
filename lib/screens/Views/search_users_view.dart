@@ -25,6 +25,14 @@ class _SearchUsersState extends State<SearchUsers> {
     return enableAddButton;
   }
 
+  List<String> extractIdFrom(List<ShareableUser> users) {
+    final List<String> usersToAddIds = [];
+    for (var user in users) {
+      usersToAddIds.add(user.id);
+    }
+    return usersToAddIds;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -47,7 +55,8 @@ class _SearchUsersState extends State<SearchUsers> {
                   ElevatedButton.icon(
                     onPressed: usersToAdd.isNotEmpty
                         ? () {
-                            Navigator.of(context).pop(usersToAdd);
+                            Navigator.of(context)
+                                .pop(extractIdFrom(usersToAdd));
                           }
                         : null,
                     icon: const Icon(Icons.navigate_next),

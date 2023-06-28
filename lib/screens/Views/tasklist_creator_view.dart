@@ -152,15 +152,11 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                           isShared = value;
                         });
                         if (isShared) {
-                          final List<ShareableUser> users = await showDialog(
+                          final List<String> users = await showDialog(
                               context: context,
                               builder: (context) => const SearchUsers());
                           setState(() {
-                            final List<String> usersToAddIds = [];
-                            for (var user in users) {
-                              usersToAddIds.add(user.id);
-                            }
-                            usersId.addAll(usersToAddIds);
+                            usersId.addAll(users);
                           });
                         }
                       }),
