@@ -240,7 +240,7 @@ class TaskListListView extends StatelessWidget {
                 onPressed: (context) async {
                   final List<String> newlyAddedUsers = await showDialog(
                     context: context,
-                    builder: (context) => SearchUsers(),
+                    builder: (context) => const SearchUsers(),
                   );
                   //addUsersToList(list.Id!, newlyAddedUsers);  ---> falta hacer esta funcion
                 },

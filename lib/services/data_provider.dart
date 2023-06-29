@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excluidos_unidos/models/tasks.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -111,7 +109,7 @@ class DataProvider {
         .collection('users')
         .where('email', isEqualTo: email)
         .get();
-    if (user.docs.length == 0) return null;
+    if (user.docs.isEmpty) return null;
     return ShareableUser.fromJson(user.docs.first.data(), user.docs.first.id);
   }
 

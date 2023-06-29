@@ -1,9 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
-
-import '../../models/tasklist.dart';
 
 class SearchUsers extends StatefulWidget {
   const SearchUsers({super.key});
@@ -81,7 +78,6 @@ class _SearchUsersState extends State<SearchUsers> {
                           userToAdd = null;
                           enableAddButton = false;
                         }
-                        ;
                       },
                     );
                   },
@@ -92,7 +88,7 @@ class _SearchUsersState extends State<SearchUsers> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     onPressed: isAddUserButtonEnabled()
                         ? () {

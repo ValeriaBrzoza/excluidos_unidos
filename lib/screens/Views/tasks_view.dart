@@ -68,108 +68,115 @@ class _TaskListViewState extends State<TaskListView> {
       stream: listsStream,
       builder: (context, snapshot) {
         final taskList = snapshot.data ?? widget.tasksList;
-
         return StreamBuilder<List<Task>>(
           stream: tasksStream,
           builder: (context, snapshot) {
-            final tasks = snapshot.data ?? [];
-            tasks.sort((a, b) {
-              if (a.completed) {
-                return 1;
-              }
-              return -1;
-            });
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (snapshot.hasData) {
+              final tasks = snapshot.data ?? [];
+              tasks.sort((a, b) {
+                if (a.completed) {
+                  return 1;
+                }
+                return -1;
+              });
 
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(taskList.name),
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      showSearch(
-                        context: context,
-                        delegate: TaskSearchDelegate(
-                            taskLists: tasks, listTask: taskList),
-                      );
-                    },
-                    icon: const Icon(Icons.search),
-                    tooltip: 'Buscar',
-                  ),
-                ],
-              ),
-              floatingActionButton: FloatingActionButton(
-                onPressed: showAddTaskDialog, //te lleva a otra vista
-                child: const Icon(Icons.add),
-              ),
-              body: ListView.builder(
-                itemCount: tasks.length,
-                itemBuilder: (context, index) {
-                  final task = tasks[index];
-                  final actionPane = ActionPane(
-                    extentRatio: 0.66,
-                    motion: const ScrollMotion(),
-                    children: [
-                      SlidableAction(
-                        onPressed: (context) {
-                          deleteTask(task.id!);
-                        },
-                        label: 'Eliminar',
-                        backgroundColor: Colors.red,
-                        icon: Icons.clear,
-                      ),
-                      Visibility(
-                          visible: taskList.isShared,
-                          child: SlidableAction(
-                            onPressed: (context) {},
-                            // onPressed: (context) async {
-                            //   final addedUser =
-                            //       await showDialog<String>(
-                            //     context: context,
-                            //     builder: (context) => AssignUser(
-                            //       tasksList: taskList,
-                            //     ),
-                            //   );
-                            //   task.add(addedUser);
-                            // },
-                            label: task.assignedUser != null
-                                ? "{nombre}"
-                                : 'Asignar',
-                            backgroundColor: Colors.grey,
-                            icon: task.assignedUser != null
-                                ? Icons.person
-                                : Icons.person_add,
-                          ))
-                    ],
-                  );
-
-                  return Slidable(
-                    key: Key(task.id!),
-                    startActionPane: actionPane,
-                    endActionPane: actionPane,
-                    child: CheckboxListTile(
-                      title: Text(
-                        task.title,
-                        style: TextStyle(
-                            color: task.completed ? Colors.grey : null,
-                            decoration: task.completed
-                                ? TextDecoration.lineThrough
-                                : null),
-                      ),
-                      subtitle: widget.tasksList.tasksLimitDateRequired &&
-                              task.deadline != null
-                          ? Text(
-                              DateFormat('dd/MM/yyyy').format(task.deadline!))
-                          : null,
-                      value: task.completed,
-                      onChanged: (bool? newValue) {
-                        DataProvider.instance.setTaskCompleted(
-                            taskList.id!, task.id!, newValue!);
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text(taskList.name),
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        showSearch(
+                          context: context,
+                          delegate: TaskSearchDelegate(
+                              taskLists: tasks, listTask: taskList),
+                        );
                       },
+                      icon: const Icon(Icons.search),
+                      tooltip: 'Buscar',
                     ),
-                  );
-                },
-              ),
-            );
+                  ],
+                ),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: showAddTaskDialog, //te lleva a otra vista
+                  child: const Icon(Icons.add),
+                ),
+                body: ListView.builder(
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    final task = tasks[index];
+                    final actionPane = ActionPane(
+                      extentRatio: 0.66,
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) {
+                            deleteTask(task.id!);
+                          },
+                          label: 'Eliminar',
+                          backgroundColor: Colors.red,
+                          icon: Icons.clear,
+                        ),
+                        Visibility(
+                            visible: taskList.isShared,
+                            child: SlidableAction(
+                              onPressed: (context) {},
+                              // onPressed: (context) async {
+                              //   final addedUser =
+                              //       await showDialog<String>(
+                              //     context: context,
+                              //     builder: (context) => AssignUser(
+                              //       tasksList: taskList,
+                              //     ),
+                              //   );
+                              //   task.add(addedUser);
+                              // },
+                              label: task.assignedUser != null
+                                  ? "{nombre}"
+                                  : 'Asignar',
+                              backgroundColor: Colors.grey,
+                              icon: task.assignedUser != null
+                                  ? Icons.person
+                                  : Icons.person_add,
+                            ))
+                      ],
+                    );
+
+                    return Slidable(
+                      key: Key(task.id!),
+                      startActionPane: actionPane,
+                      endActionPane: actionPane,
+                      child: CheckboxListTile(
+                        title: Text(
+                          task.title,
+                          style: TextStyle(
+                              color: task.completed ? Colors.grey : null,
+                              decoration: task.completed
+                                  ? TextDecoration.lineThrough
+                                  : null),
+                        ),
+                        subtitle: widget.tasksList.tasksLimitDateRequired &&
+                                task.deadline != null
+                            ? Text(
+                                DateFormat('dd/MM/yyyy').format(task.deadline!))
+                            : null,
+                        value: task.completed,
+                        onChanged: (bool? newValue) {
+                          DataProvider.instance.setTaskCompleted(
+                              taskList.id!, task.id!, newValue!);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              );
+            } else {
+              return const Center(child: Text('No data available'));
+            }
           },
         );
       },

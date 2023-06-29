@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
         index: selectedIndex,
         children: screens,
       ),
-      //Botones de la Barra de navegacion
+      //Botones de la Barra de navegación
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
         onDestinationSelected: (value) {

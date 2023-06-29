@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:excluidos_unidos/models/tasklist.dart';
 import 'package:excluidos_unidos/screens/Views/search_users_view.dart';
-import 'package:excluidos_unidos/services/data_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/widgets/switch_list_tile.dart';
@@ -51,7 +49,6 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
   }
 
   void complete() {
-    print(usersId);
     Navigator.of(context).pop(
       TaskList(
         name: name,
