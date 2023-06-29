@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
 
 class SearchUsers extends StatefulWidget {
-  const SearchUsers({super.key});
+  const SearchUsers({super.key, required this.authorId});
+
+  final String authorId;
 
   @override
   State<SearchUsers> createState() => _SearchUsersState();
@@ -71,7 +73,9 @@ class _SearchUsersState extends State<SearchUsers> {
                         await DataProvider.instance.searchForUser(email);
                     setState(
                       () {
-                        if (userFound != null) {
+                        if (userFound != null &&
+                            !usersToAdd.contains(userFound) &&
+                            userFound.id != widget.authorId) {
                           userToAdd = userFound;
                           enableAddButton = true;
                         } else {
@@ -92,18 +96,14 @@ class _SearchUsersState extends State<SearchUsers> {
                   child: ElevatedButton(
                     onPressed: isAddUserButtonEnabled()
                         ? () {
-                            setState(() {
-                              usersToAdd.add(userToAdd!);
-                            });
+                            if (!usersToAdd.contains(userToAdd)) {
+                              setState(() {
+                                usersToAdd.add(userToAdd!);
+                              });
+                            }
                           }
                         : null,
-                    child: const SizedBox(
-                      height: 20,
-                      width: 60,
-                      child: Center(
-                        child: Text('Add'),
-                      ),
-                    ),
+                    child: Icon(Icons.add_circle_outline_sharp),
                   ),
                 ),
                 Expanded(
@@ -114,6 +114,7 @@ class _SearchUsersState extends State<SearchUsers> {
                         value: true,
                         onChanged: (value) {
                           setState(() {
+                            usersToAdd.removeAt(index);
                             value = false;
                           });
                         },

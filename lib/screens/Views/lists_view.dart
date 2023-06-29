@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excluidos_unidos/screens/Views/search_users_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -240,7 +241,8 @@ class TaskListListView extends StatelessWidget {
                 onPressed: (context) async {
                   final List<String> newlyAddedUsers = await showDialog(
                     context: context,
-                    builder: (context) => const SearchUsers(),
+                    builder: (context) => SearchUsers(
+                        authorId: FirebaseAuth.instance.currentUser!.uid),
                   );
                   //addUsersToList(list.Id!, newlyAddedUsers);  ---> falta hacer esta funcion
                 },

@@ -151,7 +151,10 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                         if (isShared) {
                           final List<String> users = await showDialog(
                               context: context,
-                              builder: (context) => const SearchUsers());
+                              builder: (context) => SearchUsers(
+                                    authorId:
+                                        FirebaseAuth.instance.currentUser!.uid,
+                                  ));
                           setState(() {
                             usersId.addAll(users);
                           });
