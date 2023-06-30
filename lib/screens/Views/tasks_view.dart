@@ -154,6 +154,7 @@ class _TaskListViewState extends State<TaskListView> {
                                 DateFormat('dd/MM/yyyy').format(task.deadline!))
                             : null,
                         value: task.completed,
+                        enabled: !task.completed,
                         onChanged: (bool? newValue) {
                           DataProvider.instance.setTaskCompleted(
                               taskList.id!, task.id!, newValue!);
