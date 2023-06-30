@@ -99,7 +99,6 @@ class DataProvider {
     for (var doc in querySnapshot.docs) {
       batch.delete(doc.reference);
     }
-
     return batch.commit();
   }
 
