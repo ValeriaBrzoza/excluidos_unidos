@@ -83,6 +83,26 @@ class DataProvider {
         .delete();
   }
 
+  Future<void> deleteCompletedTasks(String listId) async {
+    final tasksCollection = FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .collection('tasks');
+
+    final completedTasksQuery =
+        tasksCollection.where('completed', isEqualTo: true);
+
+    final querySnapshot = await completedTasksQuery.get();
+
+    final batch = FirebaseFirestore.instance.batch();
+
+    querySnapshot.docs.forEach((doc) {
+      batch.delete(doc.reference);
+    });
+
+    return batch.commit();
+  }
+
   Future<void> updateUserData(User user) {
     return FirebaseFirestore.instance.collection('users').doc(user.uid).set({
       'name': user.displayName,
@@ -161,6 +181,12 @@ class DataProviderGuest implements DataProvider {
   @override
   Stream<List<TaskList>> getLists(String idUser) {
     // TODO: implement getLists
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> deleteCompletedTasks(String listId) async {
+    // TODO: implement deleteCompletedTasks
     throw UnimplementedError();
   }
 

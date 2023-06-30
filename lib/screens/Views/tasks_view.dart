@@ -61,6 +61,33 @@ class _TaskListViewState extends State<TaskListView> {
     }
   }
 
+  Future<void> deleteCompletedTasks() async {
+    // Request confirmation
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Eliminar Tareas Completadas'),
+        content: const Text(
+            '¿Estás seguro de que quieres eliminar las tareas completadas?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+
+    // If confirmed, delete task
+    if (confirmed == true) {
+      await DataProvider.instance.deleteCompletedTasks(widget.tasksList.id!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<TaskList>(
@@ -97,6 +124,13 @@ class _TaskListViewState extends State<TaskListView> {
                       },
                       icon: const Icon(Icons.search),
                       tooltip: 'Buscar',
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        deleteCompletedTasks();
+                      },
+                      icon: const Icon(Icons.layers_clear),
+                      tooltip: 'Borrar Completadas',
                     ),
                   ],
                 ),
