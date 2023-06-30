@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:excluidos_unidos/models/tasklist.dart';
 import 'package:excluidos_unidos/models/tasks.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
@@ -42,7 +41,6 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
     );
   }
 
-  //TODO: cambiar los números "mágicos" por varibles/constantes/etc.
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -51,7 +49,7 @@ class _TaskCreatorViewState extends State<TaskCreatorView> {
         //recorta bordes para que sea redondeado
         borderRadius: BorderRadius.circular(16),
         child: AnimatedContainer(
-          //conteniner que se agrega para el boton de guardar
+          //conteiner que se agrega para el botón de guardar
           duration: const Duration(milliseconds: 200),
           height: widget.tasksList.tasksLimitDateRequired ? 240 : 206,
           child: Scaffold(

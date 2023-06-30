@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LogInButton extends StatelessWidget {
   const LogInButton({
@@ -20,7 +21,9 @@ class LogInButton extends StatelessWidget {
             height: 70,
             width: double.infinity,
             child: Center(
-              child: Text(text, style: const TextStyle(color: Colors.white)),
+              child: Text(text,
+                  style: TextStyle(
+                      color: Get.isDarkMode ? Colors.black87 : Colors.white)),
             )));
   }
 }

@@ -61,7 +61,6 @@ class _TaskListViewState extends State<TaskListView> {
     }
   }
 
-  //TODO: agregarle animaciones
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<TaskList>(
@@ -125,16 +124,6 @@ class _TaskListViewState extends State<TaskListView> {
                             visible: taskList.isShared,
                             child: SlidableAction(
                               onPressed: (context) {},
-                              // onPressed: (context) async {
-                              //   final addedUser =
-                              //       await showDialog<String>(
-                              //     context: context,
-                              //     builder: (context) => AssignUser(
-                              //       tasksList: taskList,
-                              //     ),
-                              //   );
-                              //   task.add(addedUser);
-                              // },
                               label: task.assignedUser != null
                                   ? "{nombre}"
                                   : 'Asignar',

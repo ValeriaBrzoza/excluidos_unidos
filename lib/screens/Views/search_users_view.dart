@@ -103,7 +103,7 @@ class _SearchUsersState extends State<SearchUsers> {
                             }
                           }
                         : null,
-                    child: Icon(Icons.add_circle_outline_sharp),
+                    child: const Icon(Icons.add_circle_outline_sharp),
                   ),
                 ),
                 Expanded(

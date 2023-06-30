@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/widgets/botones.dart';
-import 'package:excluidos_unidos/screens/home.dart';
+import 'package:get/get.dart';
 
 class LogInPage extends StatelessWidget {
   const LogInPage({super.key});
@@ -27,11 +27,13 @@ class LogInPage extends StatelessWidget {
                 //centra :)
                 child: RichText(
                   //permite textos con diferentes cosas (tamaño, fuente, color)
-                  text: const TextSpan(
+                  text: TextSpan(
                     //un richtext tiene un textspan. va a contener uno o mas text
                     text: 'Eu!', //con diferentes cosas
                     style: TextStyle(
-                        color: Colors.white, fontSize: 80, fontFamily: 'Jua'),
+                        color: Get.isDarkMode ? Colors.black26 : Colors.white,
+                        fontSize: 80,
+                        fontFamily: 'Jua'),
                   ),
                 ),
               ),
@@ -39,7 +41,7 @@ class LogInPage extends StatelessWidget {
             Positioned(
               //esta dentro del stack, posicionado respecto stack
               top: 0, //stack ocupa toda la pantalla
-              bottom: 0, //y este positioned tambien
+              bottom: 0, //y este positioned también
               left: 0,
               right: 0,
               child: Padding(

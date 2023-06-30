@@ -1,6 +1,3 @@
-// Ejemplo de lista de tareas
-// TODO: Falta todo el tema de las tareas en si
-
 class TaskList {
   const TaskList({
     this.id,
@@ -28,11 +25,16 @@ class TaskList {
     return TaskList(
       id: id,
       name: json['name'] as String,
-      usersIds: (json['users'] as List<dynamic>).map((e) => e.toString()).toList(),
-      supervisorsIds: (json['supervisors'] as List<dynamic>).map((e) => e.toString()).toList(),
+      usersIds:
+          (json['users'] as List<dynamic>).map((e) => e.toString()).toList(),
+      supervisorsIds: (json['supervisors'] as List<dynamic>)
+          .map((e) => e.toString())
+          .toList(),
       isShared: json['shared'] as bool,
       tasksLimitDateRequired: json['task_limit_date_required'] as bool,
-      globalDeadline: json['global_deadline'] != null ? DateTime.parse(json['global_deadline'] as String) : null,
+      globalDeadline: json['global_deadline'] != null
+          ? DateTime.parse(json['global_deadline'] as String)
+          : null,
       tasksQuantity: json['tasks_quantity'] as int? ?? 0,
       completedTasksQuantity: json['completed_tasks_quantity'] as int? ?? 0,
     );

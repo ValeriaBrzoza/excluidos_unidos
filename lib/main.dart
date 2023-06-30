@@ -31,7 +31,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8C00CE), secondary: const Color(0xFFFF7A00)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF8C00CE),
+            secondary: const Color(0xFFFF7A00)),
       ),
       darkTheme: ThemeData.dark(useMaterial3: true),
       themeMode: ThemeMode.light,

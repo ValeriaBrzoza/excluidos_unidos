@@ -39,9 +39,9 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
 
   @override
   void dispose() {
-    //se llama cuando el boton desaparece
-    showSaveButtonTimer?.cancel(); //cancela timer del boton, si existe
-    super.dispose(); //es metodo de superclase
+    //se llama cuando el botón desaparece
+    showSaveButtonTimer?.cancel(); //cancela timer del botón, si existe
+    super.dispose(); //es método de superclase
   }
 
   bool isSaveButtomEnabled() {
@@ -52,11 +52,11 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
     Navigator.of(context).pop(
       TaskList(
         name: name,
-        usersIds: usersId, //como solucionamos esto?
+        usersIds: usersId, //TODO: como solucionamos esto?
         isShared: isShared,
         supervisorsIds: [FirebaseAuth.instance.currentUser!.uid],
         tasksLimitDateRequired: tasksLimitDateRequired,
-        globalDeadline: globalDeadLine, //Agregar fecha de vencimiento
+        globalDeadline: globalDeadLine, // Agregar fecha de vencimiento
       ),
     );
   }
@@ -74,7 +74,6 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
     });
   }
 
-  //TODO: cambiar los números "mágicos" por varibles/constantes/etc.
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -83,7 +82,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
         //recorta bordes para que sea redondeado
         borderRadius: BorderRadius.circular(16),
         child: AnimatedContainer(
-          //conteniner que se agrega para el boton de guardar
+          //conteniner que se agrega para el botón de guardar
           duration: const Duration(milliseconds: 200),
           height: 516,
           child: Scaffold(
@@ -116,7 +115,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     //recuadro de texto para el nombre de la lista
                     onChanged: (value) {
                       if (value != "") {
-                        //debe aparecer boton de guardar
+                        //debe aparecer botón de guardar
                         showSaveButtonTimer?.cancel();
                         showSaveButtonTimer = Timer(
                             const Duration(milliseconds: 200),
@@ -139,7 +138,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     ),
                   ),
                   CustomSwitchListTile(
-                      //barrita swichiable propia
+                      //barrita switchable propia
                       label: 'Compartir lista',
                       value: isShared,
                       onTap: isShared ? () {} : null,
@@ -161,7 +160,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                         }
                       }),
                   CustomSwitchListTile(
-                    //barrita swichiable propia
+                    //barrita switchable propia
                     label: 'Lista supervisada',
                     value: isSupervised,
                     onTap: () {},
@@ -174,7 +173,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                         : null, //si no IsShared, no te deja cambiarla (gris deshabilitado)
                   ),
                   CustomSwitchListTile(
-                    //barrita swichiable propia
+                    //barrita switchable propia
                     label: 'Requerir fecha máxima para las tareas',
                     value: tasksLimitDateRequired,
                     onChanged: (value) {
@@ -184,7 +183,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     },
                   ),
                   CustomSwitchListTile(
-                    //barrita swichiable propia
+                    //barrita switchable propia
                     label: 'Fecha máxima global',
                     value: globalDeadLine != null,
                     description: globalDeadLine != null

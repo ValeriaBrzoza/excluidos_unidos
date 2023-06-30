@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CustomSwitchListTile extends StatelessWidget {
   const CustomSwitchListTile({
@@ -39,11 +40,18 @@ class CustomSwitchListTile extends StatelessWidget {
                   Text(label,
                       style: TextStyle(
                           fontSize: 17,
-                          color: onChanged == null ? Colors.black45 : null)),
+                          color: onChanged == null
+                              ? (Get.isDarkMode
+                                  ? Colors.white54
+                                  : Colors.black45)
+                              : null)),
                   if (description != null)
                     Text(description!,
-                        style: const TextStyle(
-                            fontSize: 12, color: Colors.black45))
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Get.isDarkMode
+                                ? Colors.white54
+                                : Colors.black45))
                 ],
               ),
             ),
