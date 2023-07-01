@@ -12,16 +12,14 @@ class SearchUsers extends StatefulWidget {
 }
 
 class _SearchUsersState extends State<SearchUsers> {
-  bool enableAddButton = false;
-
   ShareableUser? userToAdd;
 
   Timer? showAddButtonTimer;
 
   List<ShareableUser> usersToAdd = [];
 
-  bool isAddUserButtonEnabled() {
-    return enableAddButton;
+  bool get isAddUserButtonEnabled {
+    return userToAdd != null;
   }
 
   List<String> extractIdFrom(List<ShareableUser> users) {
@@ -54,8 +52,7 @@ class _SearchUsersState extends State<SearchUsers> {
                   ElevatedButton.icon(
                     onPressed: usersToAdd.isNotEmpty
                         ? () {
-                            Navigator.of(context)
-                                .pop(extractIdFrom(usersToAdd));
+                            Navigator.of(context).pop(extractIdFrom(usersToAdd));
                           }
                         : null,
                     icon: const Icon(Icons.navigate_next),
@@ -66,35 +63,33 @@ class _SearchUsersState extends State<SearchUsers> {
             ),
             body: Column(
               children: [
-                TextField(
-                  //recuadro de texto para el nombre de la lista
-                  onChanged: (email) async {
-                    final userFound =
-                        await DataProvider.instance.searchForUser(email);
-                    setState(
-                      () {
-                        if (userFound != null &&
-                            !usersToAdd.contains(userFound) &&
-                            userFound.id != widget.authorId) {
-                          userToAdd = userFound;
-                          enableAddButton = true;
-                        } else {
-                          userToAdd = null;
-                          enableAddButton = false;
-                        }
-                      },
-                    );
-                  },
-                  decoration: const InputDecoration(
-                    //visual del textfield
-                    labelText: 'Añadir usuario por email',
-                    filled: true,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: TextField(
+                    //recuadro de texto para el nombre de la lista
+                    onChanged: (email) async {
+                      final userFound = await DataProvider.instance.searchForUser(email.trim());
+                      setState(
+                        () {
+                          if (userFound != null && !usersToAdd.contains(userFound) && userFound.id != widget.authorId) {
+                            userToAdd = userFound;
+                          } else {
+                            userToAdd = null;
+                          }
+                        },
+                      );
+                    },
+                    decoration: const InputDecoration(
+                      //visual del textfield
+                      labelText: 'Añadir usuario por email',
+                      filled: true,
+                    ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: isAddUserButtonEnabled()
+                  child: ElevatedButton.icon(
+                    onPressed: isAddUserButtonEnabled
                         ? () {
                             if (!usersToAdd.contains(userToAdd)) {
                               setState(() {
@@ -103,22 +98,28 @@ class _SearchUsersState extends State<SearchUsers> {
                             }
                           }
                         : null,
-                    child: const Icon(Icons.add_circle_outline_sharp),
+                    icon: const Icon(Icons.add_circle_outline_sharp),
+                    label: Text("Añadir ${userToAdd?.name ?? ''}"),
                   ),
                 ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: usersToAdd.length,
                     itemBuilder: (context, index) {
-                      return CheckboxListTile(
-                        value: true,
-                        onChanged: (value) {
-                          setState(() {
-                            usersToAdd.removeAt(index);
-                            value = false;
-                          });
-                        },
-                        title: Text(usersToAdd[index].email),
+                      return ListTile(
+                        trailing: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              usersToAdd.removeAt(index);
+                            });
+                          },
+                          icon: const Icon(Icons.clear),
+                        ),
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(usersToAdd[index].photoUrl),
+                        ),
+                        title: Text(usersToAdd[index].name),
+                        subtitle: Text(usersToAdd[index].email),
                       );
                     },
                   ),

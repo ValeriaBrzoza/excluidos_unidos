@@ -4,6 +4,7 @@ firebase.initializeApp() // inicializa la app de firebase
 
 const functions = require("firebase-functions");  // require funciona como importar. Importa las funciones de firebase
 const firestore = firebase.firestore()
+const auth = firebase.auth()
 
 const {
     onDocumentWritten,
@@ -19,12 +20,20 @@ async function sendNotificationToUser(userId, notification) {
     const tokenDocs = await firestore.collection("fcm_tokens").where("user_id", "==", userId).get() //busco en la coleccion fcm_tokens el token del usuario
     const tokens = tokenDocs.docs.map(doc => doc.id) //lo vuelvo un array de strings (el id del documento es el token)
 
-    functions.logger.info(`Notificación enviada: ${JSON.stringify(notification)}`, {structuredData: true}); //muestra en la consola de firebase el mensaje
+    functions.logger.info(`Notificación enviada: ${JSON.stringify(notification)}`, { structuredData: true }); //muestra en la consola de firebase el mensaje
 
     for (const token of tokens) {
         await firebase.messaging().send({ //envia al token la notificaion con el titulo y el cuerpo
             "token": token,
-            "notification": notification
+            "notification": notification,
+            android: {
+                priority: 'high',
+                notification: {
+                    priority: 'high',
+                    clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+                },
+            },
+
         })
     }
 }
@@ -35,7 +44,8 @@ module.exports.listCreated = onDocumentCreated('task_lists/{id}', async (event) 
 
     const deadline = data.global_deadline
 
-    functions.logger.info(`Lista creada: ${data.name}, usuarios: ${users}, deadline ${deadline}`, {structuredData: true}); //muestra en la consola de firebase el mensaje
+    // Como `print` pero para la cloud function (para debuggear)
+    functions.logger.info(`Lista creada: ${data.name}, usuarios: ${users}, deadline ${deadline}`, { structuredData: true }); //muestra en la consola de firebase el mensaje
 
     for (const user of users) { //recorre los usuarios con los que esta compartido
         await sendNotificationToUser(user, {
@@ -48,7 +58,8 @@ module.exports.listCreated = onDocumentCreated('task_lists/{id}', async (event) 
 module.exports.listTaskCreated = onDocumentCreated('task_lists/{id}/tasks/{taskId}', async (event) => {
     const data = event.data.data()
 
-    functions.logger.info(`Tarea creada: ${JSON.stringify(data)}`, {structuredData: true});
+    // Como `print` pero para la cloud function (para debuggear)
+    functions.logger.info(`Tarea creada: ${JSON.stringify(data)}`, { structuredData: true });
 
     const id = event.params.id
     const taskList = (await firestore.collection("task_lists").doc(id).get()).data()
@@ -64,3 +75,28 @@ module.exports.listTaskCreated = onDocumentCreated('task_lists/{id}/tasks/{taskI
 });
 
 
+module.exports.listTaskCompleted = onDocumentUpdated('task_lists/{id}/tasks/{taskId}', async (event) => {
+    const after = event.data.after.data()
+    const before = event.data.before.data()
+
+    if (before.completed === after.completed || !after.completed) return
+
+    const id = event.params.id
+    const taskList = (await firestore.collection("task_lists").doc(id).get()).data()
+
+    // Como `print` pero para la cloud function (para debuggear)
+    functions.logger.info(`Tarea completada: ${JSON.stringify(after)} --> ${JSON.stringify(after.title)}`, { structuredData: true });
+
+    const users = taskList.users
+
+    for (const user of users) {
+        if (user === after.completed_by) continue
+
+        const userData = await auth.getUser(after.completed_by)
+
+        await sendNotificationToUser(user, {
+            "title": `Tarea completada ${after.title} - ${taskList.name}`,
+            "body": `Completada por ${userData.displayName}`
+        })
+    }
+});

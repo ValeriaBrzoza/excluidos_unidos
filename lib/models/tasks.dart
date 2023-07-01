@@ -6,13 +6,15 @@ class Task {
   final DateTime? deadline;
   final String? assignedUser;
   final bool completed;
+  final String? completedBy;
 
   const Task({
     this.id,
     required this.title,
     required this.deadline,
     required this.assignedUser,
-    required this.completed,
+    this.completed = false,
+    this.completedBy,
   });
 
   Map<String, dynamic> toJson() {
@@ -22,6 +24,7 @@ class Task {
       'deadline': deadline,
       'assigned_user': assignedUser,
       'completed': completed,
+      'completed_by': completedBy,
     };
   }
 
@@ -32,6 +35,7 @@ class Task {
       deadline: (json['deadline'] as Timestamp?)?.toDate(),
       assignedUser: json['assigned_user'],
       completed: json['completed'],
+      completedBy: json['completed_by'],
     );
   }
 
@@ -41,6 +45,7 @@ class Task {
     DateTime? deadline,
     String? assignedUser,
     bool? completed,
+    String? completedBy,
   }) {
     return Task(
       id: id ?? this.id,
@@ -48,42 +53,7 @@ class Task {
       deadline: deadline ?? this.deadline,
       assignedUser: assignedUser ?? this.assignedUser,
       completed: completed ?? this.completed,
-    );
-  }
-
-  Task withCompleted(bool completed) {
-    return Task(
-      title: title,
-      deadline: deadline,
-      assignedUser: assignedUser,
-      completed: completed,
-    );
-  }
-
-  Task withDeadline(DateTime? deadline) {
-    return Task(
-      title: title,
-      deadline: deadline,
-      assignedUser: assignedUser,
-      completed: completed,
-    );
-  }
-
-  Task withAssignedUser(String? assignedUser) {
-    return Task(
-      title: title,
-      deadline: deadline,
-      assignedUser: assignedUser,
-      completed: completed,
-    );
-  }
-
-  Task withTitle(String title) {
-    return Task(
-      title: title,
-      deadline: deadline,
-      assignedUser: assignedUser,
-      completed: completed,
+      completedBy: completedBy ?? this.completedBy,
     );
   }
 
@@ -107,5 +77,4 @@ class Task {
   int get hashCode {
     return title.hashCode ^ deadline.hashCode ^ assignedUser.hashCode ^ completed.hashCode;
   }
-
 }
