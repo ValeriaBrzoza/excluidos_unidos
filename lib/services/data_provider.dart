@@ -68,11 +68,16 @@ class DataProvider {
   }
 
   Future<void> updateUserData(User user) {
-    return FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-      'name': user.displayName,
+    final data = {
       'email': user.email,
       'photo_url': user.photoURL,
-    });
+    };
+
+    if (user.displayName != null) {
+      data['name'] = user.displayName;
+    }
+
+    return FirebaseFirestore.instance.collection('users').doc(user.uid).set(data, SetOptions(merge: true));
   }
 
   Future<void> updateNotificationsToken() async {
@@ -110,7 +115,7 @@ class ShareableUser {
   ShareableUser({required this.name, required this.email, required this.photoUrl, required this.id});
 
   ShareableUser.fromJson(Map<String, dynamic> json, this.id)
-      : name = json['name'],
+      : name = json['name'] ?? (json['email'] as String).split('@').first,
         email = json['email'],
         photoUrl = json['photo_url'];
 
