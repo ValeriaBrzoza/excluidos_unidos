@@ -83,7 +83,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
         child: AnimatedContainer(
           //conteniner que se agrega para el botón de guardar
           duration: const Duration(milliseconds: 200),
-          height: 516,
+          height: 415,
           child: Scaffold(
             appBar: AppBar(
               title: const Text('Crear lista de tareas'),
@@ -155,19 +155,6 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                           });
                         }
                       }),
-                  CustomSwitchListTile(
-                    //barrita switchable propia
-                    label: 'Lista supervisada',
-                    value: isSupervised,
-                    onTap: () {},
-                    onChanged: isShared //si IsShared, te permite cambiar T y F
-                        ? (value) {
-                            setState(() {
-                              isSupervised = value;
-                            });
-                          }
-                        : null, //si no IsShared, no te deja cambiarla (gris deshabilitado)
-                  ),
                   CustomSwitchListTile(
                     //barrita switchable propia
                     label: 'Requerir fecha máxima para las tareas',
