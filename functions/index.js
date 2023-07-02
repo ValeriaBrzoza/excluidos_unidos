@@ -23,18 +23,23 @@ async function sendNotificationToUser(userId, notification) {
     functions.logger.info(`Notificación enviada: ${JSON.stringify(notification)}`, { structuredData: true }); //muestra en la consola de firebase el mensaje
 
     for (const token of tokens) {
-        await firebase.messaging().send({ //envia al token la notificaion con el titulo y el cuerpo
-            "token": token,
-            "notification": notification,
-            android: {
-                priority: 'high',
-                notification: {
+        try {
+            await firebase.messaging().send({ //envia al token la notificaion con el titulo y el cuerpo
+                "token": token,
+                "notification": notification,
+                android: {
                     priority: 'high',
-                    clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+                    notification: {
+                        priority: 'high',
+                        clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+                    },
                 },
-            },
 
-        })
+            })
+        } catch (error) {
+            functions.logger.error(`Error al enviar notificación: ${error}`, { structuredData: true }); //muestra en la consola de firebase el mensaje
+            await firebase.firestore().collection("fcm_tokens").doc(token).delete()
+        }
     }
 }
 

@@ -30,10 +30,7 @@ class LogInPage extends StatelessWidget {
                   text: TextSpan(
                     //un richtext tiene un textspan. va a contener uno o mas text
                     text: 'Eu!', //con diferentes cosas
-                    style: TextStyle(
-                        color: Get.isDarkMode ? Colors.black26 : Colors.white,
-                        fontSize: 80,
-                        fontFamily: 'Jua'),
+                    style: TextStyle(color: Get.isDarkMode ? Colors.black26 : Colors.white, fontSize: 80, fontFamily: 'Jua'),
                   ),
                 ),
               ),
@@ -49,20 +46,13 @@ class LogInPage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0), //propiedad del borde
                 child: Column(
                   //esto esta a 8 puntos de distancia entre todos los bordes
-                  mainAxisAlignment: MainAxisAlignment
-                      .center, //eje principal de la columna, .center porque lo queremos centrado
+                  mainAxisAlignment: MainAxisAlignment.center, //eje principal de la columna, .center porque lo queremos centrado
                   children: [
                     LogInButton(
                       //widget propio
                       text: 'Ingresar con Google',
                       onPressed: () {
-                        if (kIsWeb) {
-                          FirebaseAuth.instance
-                              .signInWithRedirect(GoogleAuthProvider());
-                        } else {
-                          FirebaseAuth.instance
-                              .signInWithProvider(GoogleAuthProvider());
-                        }
+                        FirebaseAuth.instance.signInWithRedirect(GoogleAuthProvider());
                       },
                       buttonColor: themeColors.secondary,
                     ),

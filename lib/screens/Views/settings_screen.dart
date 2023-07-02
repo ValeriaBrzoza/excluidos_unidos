@@ -18,9 +18,7 @@ class _SettingsViewState extends State<SettingsView> {
   bool _toggle = Get.isDarkMode;
   @override
   Widget build(BuildContext context) {
-    const themeData = SettingsThemeData(
-        settingsListBackground: Colors.transparent,
-        settingsSectionBackground: Colors.transparent);
+    const themeData = SettingsThemeData(settingsListBackground: Colors.transparent, settingsSectionBackground: Colors.transparent);
 
     final user = FirebaseAuth.instance.currentUser;
 
@@ -35,21 +33,6 @@ class _SettingsViewState extends State<SettingsView> {
           SettingsSection(
             title: const Text('General'),
             tiles: [
-              if (user == null)
-                SettingsTile.navigation(
-                  title: const Text('Iniciar sesión con Google'),
-                  leading: const Icon(Icons.no_accounts),
-                  description: const Text('Estás como usuario invitado'),
-                  onPressed: (context) {
-                    if (kIsWeb) {
-                      FirebaseAuth.instance
-                          .signInWithRedirect(GoogleAuthProvider());
-                    } else {
-                      FirebaseAuth.instance
-                          .signInWithProvider(GoogleAuthProvider());
-                    }
-                  },
-                ),
               if (user != null)
                 SettingsTile.navigation(
                   title: Text(user.displayName ?? 'Usuario'),
@@ -70,9 +53,7 @@ class _SettingsViewState extends State<SettingsView> {
                   _toggle
                       ? Get.changeTheme(ThemeData(
                           useMaterial3: true,
-                          colorScheme: ColorScheme.fromSeed(
-                              seedColor: const Color(0xFF8C00CE),
-                              secondary: const Color(0xFFFF7A00)),
+                          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8C00CE), secondary: const Color(0xFFFF7A00)),
                         ))
                       : Get.changeTheme(ThemeData.dark(useMaterial3: true));
                   setState(() {

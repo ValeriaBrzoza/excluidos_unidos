@@ -15,8 +15,7 @@ class _AppAuthWrapperState extends State<AppAuthWrapper> {
 
   @override
   void initState() {
-    stream = FirebaseAuth.instance
-        .authStateChanges(); //envía estado de inicio de sesión
+    stream = FirebaseAuth.instance.authStateChanges(); //envía estado de inicio de sesión
     super.initState(); //estado inicial del widget
   }
 
