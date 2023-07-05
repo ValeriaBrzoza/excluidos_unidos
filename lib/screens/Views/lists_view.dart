@@ -215,6 +215,10 @@ class TaskListListView extends StatelessWidget {
     }
   }
 
+  Future<void> addUsersToList(String listId, List<String> users) async {
+    await DataProvider.instance.addUsersToList(listId, users);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -243,7 +247,8 @@ class TaskListListView extends StatelessWidget {
                     builder: (context) => SearchUsers(
                         authorId: FirebaseAuth.instance.currentUser!.uid),
                   );
-                  //addUsersToList(list.Id!, newlyAddedUsers);  ---> falta hacer esta funcion
+                  addUsersToList(list.id!,
+                      newlyAddedUsers); //---> TODO: falta hacer esta función
                 },
                 label: 'Añadir',
                 backgroundColor: Colors.grey,

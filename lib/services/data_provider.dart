@@ -7,22 +7,37 @@ import '../models/tasklist.dart';
 
 class DataProvider {
   Stream<List<TaskList>> getLists(String idUser) {
-    return FirebaseFirestore.instance.collection('task_lists').where('users', arrayContains: idUser).snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => TaskList.fromJson(doc.data(), doc.id)).toList();
+    return FirebaseFirestore.instance
+        .collection('task_lists')
+        .where('users', arrayContains: idUser)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => TaskList.fromJson(doc.data(), doc.id))
+          .toList();
     });
   }
 
   // Get single tasklist
   Stream<TaskList> getList(String id) {
-    return FirebaseFirestore.instance.collection('task_lists').doc(id).snapshots().map((doc) => TaskList.fromJson(doc.data()!, doc.id));
+    return FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(id)
+        .snapshots()
+        .map((doc) => TaskList.fromJson(doc.data()!, doc.id));
   }
 
   Future<void> addList(TaskList list) {
-    return FirebaseFirestore.instance.collection('task_lists').add(list.toJson());
+    return FirebaseFirestore.instance
+        .collection('task_lists')
+        .add(list.toJson());
   }
 
   Future<void> updateList(TaskList list) {
-    return FirebaseFirestore.instance.collection('task_lists').doc(list.id).update(list.toJson());
+    return FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(list.id)
+        .update(list.toJson());
   }
 
   Future<void> deleteList(String id) {
@@ -30,7 +45,11 @@ class DataProvider {
   }
 
   Future<void> addTaskToTaskList(String listId, Task task) {
-    return FirebaseFirestore.instance.collection('task_lists').doc(listId).collection('tasks').add(task.toJson());
+    return FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .collection('tasks')
+        .add(task.toJson());
   }
 
   Future<void> setTaskCompleted(String listId, String taskId, bool completed) {
@@ -39,23 +58,42 @@ class DataProvider {
         .doc(listId)
         .collection('tasks')
         .doc(taskId)
-        .update({'completed': completed, 'completed_by': FirebaseAuth.instance.currentUser!.uid});
+        .update({
+      'completed': completed,
+      'completed_by': FirebaseAuth.instance.currentUser!.uid
+    });
   }
 
   Stream<List<Task>> getTasks(String listId) {
-    return FirebaseFirestore.instance.collection('task_lists').doc(listId).collection('tasks').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => Task.fromJson(doc.data(), doc.id)).toList();
+    return FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .collection('tasks')
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Task.fromJson(doc.data(), doc.id))
+          .toList();
     });
   }
 
   Future<void> deleteTask(String listId, String taskId) {
-    return FirebaseFirestore.instance.collection('task_lists').doc(listId).collection('tasks').doc(taskId).delete();
+    return FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .collection('tasks')
+        .doc(taskId)
+        .delete();
   }
 
   Future<void> deleteCompletedTasks(String listId) async {
-    final tasksCollection = FirebaseFirestore.instance.collection('task_lists').doc(listId).collection('tasks');
+    final tasksCollection = FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .collection('tasks');
 
-    final completedTasksQuery = tasksCollection.where('completed', isEqualTo: true);
+    final completedTasksQuery =
+        tasksCollection.where('completed', isEqualTo: true);
 
     final querySnapshot = await completedTasksQuery.get();
 
@@ -77,7 +115,10 @@ class DataProvider {
       data['name'] = user.displayName;
     }
 
-    return FirebaseFirestore.instance.collection('users').doc(user.uid).set(data, SetOptions(merge: true));
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .set(data, SetOptions(merge: true));
   }
 
   Future<void> updateNotificationsToken() async {
@@ -87,11 +128,17 @@ class DataProvider {
     }
 
     final fcmToken = await FirebaseMessaging.instance.getToken();
-    await FirebaseFirestore.instance.collection('fcm_tokens').doc(fcmToken).set({'user_id': user.uid}, SetOptions(merge: true));
+    await FirebaseFirestore.instance
+        .collection('fcm_tokens')
+        .doc(fcmToken)
+        .set({'user_id': user.uid}, SetOptions(merge: true));
   }
 
   Future<ShareableUser?> searchForUser(String email) async {
-    final user = await FirebaseFirestore.instance.collection('users').where('email', isEqualTo: email).get();
+    final user = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
     if (user.docs.isEmpty) return null;
     return ShareableUser.fromJson(user.docs.first.data(), user.docs.first.id);
   }
@@ -104,6 +151,13 @@ class DataProvider {
   static DataProvider get instance {
     return DataProvider();
   }
+
+  Future<void> addUsersToList(String listId, List<String> users) {
+    return FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .update({'users': FieldValue.arrayUnion(users)});
+  }
 }
 
 class ShareableUser {
@@ -112,7 +166,11 @@ class ShareableUser {
   final String email;
   final String photoUrl;
 
-  ShareableUser({required this.name, required this.email, required this.photoUrl, required this.id});
+  ShareableUser(
+      {required this.name,
+      required this.email,
+      required this.photoUrl,
+      required this.id});
 
   ShareableUser.fromJson(Map<String, dynamic> json, this.id)
       : name = json['name'] ?? (json['email'] as String).split('@').first,

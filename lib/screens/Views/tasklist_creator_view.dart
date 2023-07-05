@@ -116,7 +116,9 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       if (value != "") {
                         //debe aparecer botón de guardar
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => enableSaveButton = true));
+                        showSaveButtonTimer = Timer(
+                            const Duration(milliseconds: 200),
+                            () => setState(() => enableSaveButton = true));
                         setState(() {
                           name = value; //guarda nombre
                         });
@@ -148,7 +150,8 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                           final List<String> users = await showDialog(
                               context: context,
                               builder: (context) => SearchUsers(
-                                    authorId: FirebaseAuth.instance.currentUser!.uid,
+                                    authorId:
+                                        FirebaseAuth.instance.currentUser!.uid,
                                   ));
                           setState(() {
                             usersId.addAll(users);
@@ -169,7 +172,9 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     //barrita switchable propia
                     label: 'Fecha máxima global',
                     value: globalDeadLine != null,
-                    description: globalDeadLine != null ? DateFormat('dd MMMM y').format(globalDeadLine!) : null,
+                    description: globalDeadLine != null
+                        ? DateFormat('dd MMMM y').format(globalDeadLine!)
+                        : null,
                     onChanged: tasksLimitDateRequired //si fecha limite de tareas
                         ? (value) {
                             if (value == false) {
