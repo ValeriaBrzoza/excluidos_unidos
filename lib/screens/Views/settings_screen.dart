@@ -80,7 +80,7 @@ class _SettingsViewState extends State<SettingsView> {
                 leading: const Icon(Icons.webhook),
                 title: const Text('Repositorio GitHub'),
                 onPressed: (_) {
-                  launchUrl(_url);
+                  launchUrl(_url, mode: LaunchMode.externalApplication);
                 },
               ),
             ],
