@@ -17,7 +17,9 @@ class _SettingsViewState extends State<SettingsView> {
   bool _toggle = Get.isDarkMode;
   @override
   Widget build(BuildContext context) {
-    const themeData = SettingsThemeData(settingsListBackground: Colors.transparent, settingsSectionBackground: Colors.transparent);
+    const themeData = SettingsThemeData(
+        settingsListBackground: Colors.transparent,
+        settingsSectionBackground: Colors.transparent);
 
     final user = FirebaseAuth.instance.currentUser;
 
@@ -35,7 +37,9 @@ class _SettingsViewState extends State<SettingsView> {
               if (user != null)
                 SettingsTile.navigation(
                   title: Text(user.displayName ?? 'Usuario'),
-                  leading: const Icon(Icons.account_circle),
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(user.photoURL!),
+                  ),
                   description: user.email != null ? Text(user.email!) : null,
                 ),
               if (user != null)
@@ -52,7 +56,9 @@ class _SettingsViewState extends State<SettingsView> {
                   _toggle
                       ? Get.changeTheme(ThemeData(
                           useMaterial3: true,
-                          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF8C00CE), secondary: const Color(0xFFFF7A00)),
+                          colorScheme: ColorScheme.fromSeed(
+                              seedColor: const Color(0xFF8C00CE),
+                              secondary: const Color(0xFFFF7A00)),
                         ))
                       : Get.changeTheme(ThemeData.dark(useMaterial3: true));
                   setState(() {
