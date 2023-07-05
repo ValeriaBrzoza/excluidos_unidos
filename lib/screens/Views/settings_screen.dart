@@ -38,7 +38,9 @@ class _SettingsViewState extends State<SettingsView> {
                 SettingsTile.navigation(
                   title: Text(user.displayName ?? 'Usuario'),
                   leading: CircleAvatar(
-                    backgroundImage: NetworkImage(user.photoURL!),
+                    backgroundImage: user.photoURL != null
+                        ? NetworkImage(user.photoURL!)
+                        : null,
                   ),
                   description: user.email != null ? Text(user.email!) : null,
                 ),

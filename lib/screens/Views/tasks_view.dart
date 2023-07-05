@@ -1,5 +1,6 @@
 import 'package:excluidos_unidos/models/tasklist.dart';
 import 'package:excluidos_unidos/models/tasks.dart';
+import 'package:excluidos_unidos/screens/Views/assignment_view.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/screens/Views/task_creator_view.dart';
@@ -88,6 +89,14 @@ class _TaskListViewState extends State<TaskListView> {
     }
   }
 
+  Future<void> assignTaskToUser(String taskId, String userId) async {
+    await DataProvider.instance.assignTaskToUser(
+      widget.tasksList.id!,
+      taskId,
+      userId,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<TaskList>(
@@ -155,16 +164,22 @@ class _TaskListViewState extends State<TaskListView> {
                           icon: Icons.clear,
                         ),
                         Visibility(
-                            visible: taskList.isShared,
+                            visible: taskList.isShared &&
+                                task.assignedUser == null &&
+                                task.completed == false,
                             child: SlidableAction(
-                              onPressed: (context) {},
-                              label: task.assignedUser != null
-                                  ? "{nombre}"
-                                  : 'Asignar',
+                              onPressed: (context) async {
+                                final String userID = await showDialog(
+                                    context: context,
+                                    builder: (context) => AssignUser(
+                                          usersIds: taskList.usersIds,
+                                          listId: taskList.id!,
+                                        ));
+                                assignTaskToUser(task.id!, userID);
+                              },
+                              label: 'Asignar',
                               backgroundColor: Colors.grey,
-                              icon: task.assignedUser != null
-                                  ? Icons.person
-                                  : Icons.person_add,
+                              icon: Icons.person_add,
                             ))
                       ],
                     );
@@ -174,6 +189,42 @@ class _TaskListViewState extends State<TaskListView> {
                       startActionPane: actionPane,
                       endActionPane: actionPane,
                       child: CheckboxListTile(
+                        secondary: IconButton(
+                          onPressed: () {
+                            if (task.assignedUser != null) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: const Text('Asignada a:'),
+                                        content: FutureBuilder<ShareableUser>(
+                                          future: DataProvider.instance
+                                              .getUser(task.assignedUser!),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              final user = snapshot.data;
+                                              return Text(user!.name);
+                                            } else {
+                                              return const Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            }
+                                          },
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context)
+                                                    .pop(false),
+                                            child: const Text('Cerrar'),
+                                          ),
+                                        ],
+                                      ));
+                            }
+                          },
+                          icon: task.assignedUser != null
+                              ? const Icon(Icons.person)
+                              : const Icon(Icons.person_outline),
+                        ),
                         title: Text(
                           task.title,
                           style: TextStyle(

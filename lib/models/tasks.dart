@@ -75,6 +75,9 @@ class Task {
 
   @override
   int get hashCode {
-    return title.hashCode ^ deadline.hashCode ^ assignedUser.hashCode ^ completed.hashCode;
+    return title.hashCode ^
+        deadline.hashCode ^
+        assignedUser.hashCode ^
+        completed.hashCode;
   }
 }

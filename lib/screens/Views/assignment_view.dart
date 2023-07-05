@@ -1,10 +1,10 @@
+import 'package:excluidos_unidos/services/data_provider.dart';
 import 'package:flutter/material.dart';
-import '../../models/tasklist.dart';
 
 class AssignUser extends StatefulWidget {
-  const AssignUser({super.key, required this.tasksList});
-  final TaskList tasksList;
-
+  const AssignUser({super.key, required this.usersIds, required this.listId});
+  final List<String> usersIds;
+  final String listId;
   @override
   State<AssignUser> createState() => _AssignUserState();
 }
@@ -20,11 +20,41 @@ class _AssignUserState extends State<AssignUser> {
             height: 516,
             child: Scaffold(
               appBar: AppBar(
-                title: const Text("Asignar usuario"),
+                title: const Text("Asignar Usuario"),
               ),
-              bottomNavigationBar: Container(
-                padding: const EdgeInsets.all(10),
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
+              body: ListView(
+                children: [
+                  FutureBuilder<List<ShareableUser>>(
+                    future:
+                        DataProvider.instance.getUsersFromList(widget.listId),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final users = snapshot.data!;
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: users.length,
+                          itemBuilder: (context, index) {
+                            final user = users[index];
+                            return ListTile(
+                              title: Text(user.name),
+                              subtitle: Text(user.email),
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(user.photoUrl),
+                              ),
+                              onTap: () {
+                                Navigator.of(context).pop(user.id);
+                              },
+                            );
+                          },
+                        );
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
           )),

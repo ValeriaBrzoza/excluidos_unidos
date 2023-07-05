@@ -158,6 +158,45 @@ class DataProvider {
         .doc(listId)
         .update({'users': FieldValue.arrayUnion(users)});
   }
+
+  Future<void> assignTaskToUser(String listId, String taskId, String userId) {
+    return FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .collection('tasks')
+        .doc(taskId)
+        .update({'assigned_user': userId});
+  }
+
+  Future<List<ShareableUser>> getUsersFromList(String listId) async {
+    final users = await FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .get();
+    final usersList = users.data()!['users'] as List<dynamic>;
+    final usersData = await Future.wait(usersList.map((userId) async {
+      final user = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      return ShareableUser.fromJson(user.data()!, user.id);
+    }));
+    return usersData;
+  }
+
+  Future<String> getUserPhotoUrl(String userId) async {
+    final user =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    return user.data()!['photo_url'];
+  }
+
+  Future<ShareableUser> getUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get()
+        .then((doc) => ShareableUser.fromJson(doc.data()!, doc.id));
+  }
 }
 
 class ShareableUser {

@@ -247,8 +247,7 @@ class TaskListListView extends StatelessWidget {
                     builder: (context) => SearchUsers(
                         authorId: FirebaseAuth.instance.currentUser!.uid),
                   );
-                  addUsersToList(list.id!,
-                      newlyAddedUsers); //---> TODO: falta hacer esta función
+                  addUsersToList(list.id!, newlyAddedUsers);
                 },
                 label: 'Añadir',
                 backgroundColor: Colors.grey,

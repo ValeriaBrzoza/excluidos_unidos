@@ -52,7 +52,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
     Navigator.of(context).pop(
       TaskList(
         name: name,
-        usersIds: usersId, //TODO: como solucionamos esto?
+        usersIds: usersId,
         isShared: isShared,
         tasksLimitDateRequired: tasksLimitDateRequired,
         globalDeadline: globalDeadLine, // Agregar fecha de vencimiento
