@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/widgets/switch_list_tile.dart';
 import 'package:intl/intl.dart';
 
+import '../../services/data_provider.dart';
+
 class TaskListCreatorView extends StatefulWidget {
   const TaskListCreatorView({super.key});
 
@@ -31,6 +33,8 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
   DateTime? globalDeadLine;
 
   Timer? showSaveButtonTimer;
+
+  List<ShareableUser> selectedUsers = [];
 
   @override
   void initState() {
@@ -140,21 +144,36 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       //barrita switchable propia
                       label: 'Compartir lista',
                       value: isShared,
-                      onTap: isShared ? () {} : null,
+                      onTap: isShared
+                          ? () async {
+                              final List<String> users = await showDialog(
+                                  context: context,
+                                  builder: (context) => SearchUsers(
+                                        authorId: FirebaseAuth
+                                            .instance.currentUser!.uid,
+                                        usersToAdd: selectedUsers,
+                                      ));
+                              setState(() {
+                                usersId.addAll(users);
+                              });
+                            }
+                          : null,
                       description: 'Agregar Usuarios',
                       onChanged: (value) async {
                         setState(() {
                           isShared = value;
                         });
                         if (isShared) {
-                          final List<String> users = await showDialog(
+                          selectedUsers = await showDialog(
                               context: context,
                               builder: (context) => SearchUsers(
                                     authorId:
                                         FirebaseAuth.instance.currentUser!.uid,
+                                    usersToAdd: selectedUsers,
                                   ));
                           setState(() {
-                            usersId.addAll(users);
+                            usersId.addAll(DataProvider.instance
+                                .extractIdFrom(selectedUsers));
                           });
                         }
                       }),

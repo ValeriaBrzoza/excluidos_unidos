@@ -7,7 +7,9 @@ import 'package:url_launcher/url_launcher.dart';
 final Uri _url = Uri.parse('https://github.com/ValeriaBrzoza/excluidos_unidos');
 
 class SettingsView extends StatefulWidget {
-  const SettingsView({super.key});
+  const SettingsView({
+    super.key,
+  });
 
   @override
   State<SettingsView> createState() => _SettingsViewState();

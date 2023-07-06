@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
 
 class SearchUsers extends StatefulWidget {
-  const SearchUsers({super.key, required this.authorId});
+  const SearchUsers(
+      {super.key, required this.authorId, required this.usersToAdd});
 
   final String authorId;
+  final List<ShareableUser> usersToAdd;
 
   @override
   State<SearchUsers> createState() => _SearchUsersState();
@@ -16,18 +18,8 @@ class _SearchUsersState extends State<SearchUsers> {
 
   Timer? showAddButtonTimer;
 
-  List<ShareableUser> usersToAdd = [];
-
   bool get isAddUserButtonEnabled {
     return userToAdd != null;
-  }
-
-  List<String> extractIdFrom(List<ShareableUser> users) {
-    final List<String> usersToAddIds = [];
-    for (var user in users) {
-      usersToAddIds.add(user.id);
-    }
-    return usersToAddIds;
   }
 
   @override
@@ -50,9 +42,9 @@ class _SearchUsersState extends State<SearchUsers> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: usersToAdd.isNotEmpty
+                    onPressed: widget.usersToAdd.isNotEmpty
                         ? () {
-                            Navigator.of(context).pop(extractIdFrom(usersToAdd));
+                            Navigator.of(context).pop(widget.usersToAdd);
                           }
                         : null,
                     icon: const Icon(Icons.navigate_next),
@@ -68,10 +60,13 @@ class _SearchUsersState extends State<SearchUsers> {
                   child: TextField(
                     //recuadro de texto para el nombre de la lista
                     onChanged: (email) async {
-                      final userFound = await DataProvider.instance.searchForUser(email.trim());
+                      final userFound = await DataProvider.instance
+                          .searchForUser(email.trim());
                       setState(
                         () {
-                          if (userFound != null && !usersToAdd.contains(userFound) && userFound.id != widget.authorId) {
+                          if (userFound != null &&
+                              !widget.usersToAdd.contains(userFound) &&
+                              userFound.id != widget.authorId) {
                             userToAdd = userFound;
                           } else {
                             userToAdd = null;
@@ -91,9 +86,9 @@ class _SearchUsersState extends State<SearchUsers> {
                   child: ElevatedButton.icon(
                     onPressed: isAddUserButtonEnabled
                         ? () {
-                            if (!usersToAdd.contains(userToAdd)) {
+                            if (!widget.usersToAdd.contains(userToAdd)) {
                               setState(() {
-                                usersToAdd.add(userToAdd!);
+                                widget.usersToAdd.add(userToAdd!);
                               });
                             }
                           }
@@ -104,22 +99,23 @@ class _SearchUsersState extends State<SearchUsers> {
                 ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: usersToAdd.length,
+                    itemCount: widget.usersToAdd.length,
                     itemBuilder: (context, index) {
                       return ListTile(
                         trailing: IconButton(
                           onPressed: () {
                             setState(() {
-                              usersToAdd.removeAt(index);
+                              widget.usersToAdd.removeAt(index);
                             });
                           },
                           icon: const Icon(Icons.clear),
                         ),
                         leading: CircleAvatar(
-                          backgroundImage: NetworkImage(usersToAdd[index].photoUrl),
+                          backgroundImage:
+                              NetworkImage(widget.usersToAdd[index].photoUrl),
                         ),
-                        title: Text(usersToAdd[index].name),
-                        subtitle: Text(usersToAdd[index].email),
+                        title: Text(widget.usersToAdd[index].name),
+                        subtitle: Text(widget.usersToAdd[index].email),
                       );
                     },
                   ),

@@ -242,12 +242,15 @@ class TaskListListView extends StatelessWidget {
               visible: list.isShared,
               child: SlidableAction(
                 onPressed: (context) async {
-                  final List<String> newlyAddedUsers = await showDialog(
+                  final List<ShareableUser> newlyAddedUsers = await showDialog(
                     context: context,
                     builder: (context) => SearchUsers(
-                        authorId: FirebaseAuth.instance.currentUser!.uid),
+                      authorId: FirebaseAuth.instance.currentUser!.uid,
+                      usersToAdd: const [],
+                    ),
                   );
-                  addUsersToList(list.id!, newlyAddedUsers);
+                  addUsersToList(list.id!,
+                      DataProvider.instance.extractIdFrom(newlyAddedUsers));
                 },
                 label: 'Añadir',
                 backgroundColor: Colors.grey,

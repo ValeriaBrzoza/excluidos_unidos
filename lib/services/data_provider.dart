@@ -205,6 +205,14 @@ class DataProvider {
         .get()
         .then((doc) => doc.data()!['name']);
   }
+
+  List<String> extractIdFrom(List<ShareableUser> users) {
+    final List<String> usersIds = [];
+    for (var user in users) {
+      usersIds.add(user.id);
+    }
+    return usersIds;
+  }
 }
 
 class ShareableUser {
