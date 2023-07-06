@@ -45,6 +45,10 @@ class DataProvider {
   }
 
   Future<void> addTaskToTaskList(String listId, Task task) {
+    FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .update({'tasks_quantity': FieldValue.increment(1)});
     return FirebaseFirestore.instance
         .collection('task_lists')
         .doc(listId)
@@ -53,6 +57,10 @@ class DataProvider {
   }
 
   Future<void> setTaskCompleted(String listId, String taskId, bool completed) {
+    FirebaseFirestore.instance.collection('task_lists').doc(listId).update({
+      'completed_tasks_quantity': FieldValue.increment(1),
+    });
+
     return FirebaseFirestore.instance
         .collection('task_lists')
         .doc(listId)
@@ -60,7 +68,7 @@ class DataProvider {
         .doc(taskId)
         .update({
       'completed': completed,
-      'completed_by': FirebaseAuth.instance.currentUser!.uid
+      'completed_by': FirebaseAuth.instance.currentUser!.uid,
     });
   }
 
@@ -77,7 +85,16 @@ class DataProvider {
     });
   }
 
-  Future<void> deleteTask(String listId, String taskId) {
+  Future<void> deleteTask(String listId, String taskId) async {
+    final task = await getTask(listId, taskId);
+
+    FirebaseFirestore.instance.collection('task_lists').doc(listId).update({
+      'tasks_quantity': FieldValue.increment(-1),
+      'completed_tasks_quantity': task.getCompleted()
+          ? FieldValue.increment(-1)
+          : FieldValue.increment(0),
+    });
+
     return FirebaseFirestore.instance
         .collection('task_lists')
         .doc(listId)
@@ -86,11 +103,26 @@ class DataProvider {
         .delete();
   }
 
+  Future<Task> getTask(String listId, String taskId) async {
+    final task = await FirebaseFirestore.instance
+        .collection('task_lists')
+        .doc(listId)
+        .collection('tasks')
+        .doc(taskId)
+        .get();
+    return Task.fromJson(task.data()!, task.id);
+  }
+
   Future<void> deleteCompletedTasks(String listId) async {
     final tasksCollection = FirebaseFirestore.instance
         .collection('task_lists')
         .doc(listId)
         .collection('tasks');
+
+    final lengthCompleted = await tasksCollection
+        .where('completed', isEqualTo: true)
+        .get()
+        .then((value) => value.docs.length);
 
     final completedTasksQuery =
         tasksCollection.where('completed', isEqualTo: true);
@@ -98,6 +130,11 @@ class DataProvider {
     final querySnapshot = await completedTasksQuery.get();
 
     final batch = FirebaseFirestore.instance.batch();
+
+    FirebaseFirestore.instance.collection('task_lists').doc(listId).update({
+      'tasks_quantity': FieldValue.increment(-lengthCompleted),
+      'completed_tasks_quantity': 0,
+    });
 
     for (var doc in querySnapshot.docs) {
       batch.delete(doc.reference);

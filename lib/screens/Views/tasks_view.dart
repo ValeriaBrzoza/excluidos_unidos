@@ -151,14 +151,31 @@ class _TaskListViewState extends State<TaskListView> {
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                    'Cantidad de tareas: ${taskList.tasksQuantity}'),
-                                Text(
-                                    'Cantidad de tareas sin completar: ${taskList.tasksQuantity - taskList.completedTasksQuantity}'),
-                                Text(
-                                    'Cantidad de tareas completadas: ${taskList.completedTasksQuantity}'),
-                                Text(
-                                    'Cantidad de usuarios: ${taskList.usersIds.length}'),
+                                ListTile(
+                                  leading: const Icon(Icons.circle, size: 14),
+                                  title:
+                                      Text('Tareas: ${taskList.tasksQuantity}'),
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.circle, size: 14),
+                                  title: Text(
+                                      'Sin completar: ${taskList.tasksQuantity - taskList.completedTasksQuantity}'),
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.circle, size: 14),
+                                  title: Text(
+                                      'Completadas: ${taskList.completedTasksQuantity}'),
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.circle, size: 14),
+                                  title: Text(
+                                      'Fecha Límite:  ${taskList.hasDeadline ? DateFormat('dd/MM/yyyy').format(taskList.globalDeadline!) : 'No tiene'}'),
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.circle, size: 14),
+                                  title: Text(
+                                      'Usuarios: ${taskList.usersIds.length}'),
+                                ),
                                 const SizedBox(height: 20),
                                 //show users url image as icons with their names
                                 SizedBox(

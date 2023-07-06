@@ -80,4 +80,8 @@ class Task {
         assignedUser.hashCode ^
         completed.hashCode;
   }
+
+  bool getCompleted() {
+    return completed;
+  }
 }
