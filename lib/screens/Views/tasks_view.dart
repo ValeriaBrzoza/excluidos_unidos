@@ -226,32 +226,55 @@ class _TaskListViewState extends State<TaskListView> {
                           onPressed: () {
                             if (task.assignedUser != null) {
                               showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        title: const Text('Asignada a:'),
-                                        content: FutureBuilder<ShareableUser>(
-                                          future: DataProvider.instance
-                                              .getUser(task.assignedUser!),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.hasData) {
-                                              final user = snapshot.data;
-                                              return Text(user!.name);
-                                            } else {
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            }
-                                          },
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context)
-                                                    .pop(false),
-                                            child: const Text('Cerrar'),
-                                          ),
-                                        ],
-                                      ));
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Asignada a:'),
+                                  content: SizedBox(
+                                    height: 80,
+                                    child: FutureBuilder<ShareableUser>(
+                                      future: DataProvider.instance
+                                          .getUser(task.assignedUser!),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          final user = snapshot.data;
+                                          return Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 25,
+                                                backgroundImage: NetworkImage(
+                                                    user!.photoUrl),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(user.name),
+                                                  const SizedBox(height: 8),
+                                                  Text(user.email),
+                                                ],
+                                              ),
+                                            ],
+                                          );
+                                        } else {
+                                          return const Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(false),
+                                      child: const Text('Cerrar'),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }
                           },
                           icon: task.assignedUser != null
