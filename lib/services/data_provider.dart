@@ -197,6 +197,14 @@ class DataProvider {
         .get()
         .then((doc) => ShareableUser.fromJson(doc.data()!, doc.id));
   }
+
+  Future<String> getUserName(String userId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get()
+        .then((doc) => doc.data()!['name']);
+  }
 }
 
 class ShareableUser {

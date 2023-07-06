@@ -136,6 +136,39 @@ class _TaskListViewState extends State<TaskListView> {
                     ),
                     IconButton(
                       onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Información'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    'Cantidad de tareas: ${taskList.tasksQuantity}'),
+                                Text(
+                                    'Cantidad de tareas sin completar: ${taskList.tasksQuantity - taskList.completedTasksQuantity}'),
+                                Text(
+                                    'Cantidad de tareas completadas: ${taskList.completedTasksQuantity}'),
+                                Text(
+                                    'Cantidad de usuarios: ${taskList.usersIds.length}'),
+                                //show users as icons with their names
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('Cerrar'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.info),
+                      tooltip: 'Información',
+                    ),
+                    IconButton(
+                      onPressed: () {
                         deleteCompletedTasks();
                       },
                       icon: const Icon(Icons.layers_clear),
