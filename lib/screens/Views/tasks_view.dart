@@ -416,6 +416,12 @@ class TaskSearchDelegate extends SearchDelegate {
   final List<Task> taskLists;
   final TaskList listTask;
 
+  bool isTaskEnabled(Task task) {
+    return (task.assignedUser == null ||
+            task.assignedUser == FirebaseAuth.instance.currentUser!.uid) &&
+        !task.completed;
+  }
+
   @override
   List<Widget>? buildActions(BuildContext context) => [
         IconButton(
@@ -449,28 +455,22 @@ class TaskSearchDelegate extends SearchDelegate {
       itemCount: suggestions.length,
       itemBuilder: (context, index) {
         var suggestion = suggestions[index];
-        return ListTile(
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  suggestion.title,
-                  style: TextStyle(
-                      color: suggestion.completed ? Colors.grey : null,
-                      decoration: suggestion.completed
-                          ? TextDecoration.lineThrough
-                          : null),
-                ),
-              ),
-              Checkbox(
-                  value: suggestion.completed,
-                  onChanged: (bool? newValue) {
-                    DataProvider.instance.setTaskCompleted(
-                        listTask.id!, suggestion.id!, newValue!);
-                    close(context, null);
-                  })
-            ],
+        return CheckboxListTile(
+          title: Text(
+            suggestion.title,
+            style: TextStyle(
+              color: suggestion.completed ? Colors.grey : null,
+              decoration:
+                  suggestion.completed ? TextDecoration.lineThrough : null,
+            ),
           ),
+          value: suggestion.completed,
+          enabled: isTaskEnabled(suggestion),
+          onChanged: (bool? newValue) {
+            DataProvider.instance
+                .setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
+            close(context, null);
+          },
         );
       },
     );
@@ -489,28 +489,22 @@ class TaskSearchDelegate extends SearchDelegate {
       itemCount: suggestions.length,
       itemBuilder: (context, index) {
         final suggestion = suggestions[index];
-        return ListTile(
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  suggestion.title,
-                  style: TextStyle(
-                      color: suggestion.completed ? Colors.grey : null,
-                      decoration: suggestion.completed
-                          ? TextDecoration.lineThrough
-                          : null),
-                ),
-              ),
-              Checkbox(
-                  value: suggestion.completed,
-                  onChanged: (bool? newValue) {
-                    DataProvider.instance.setTaskCompleted(
-                        listTask.id!, suggestion.id!, newValue!);
-                    close(context, null);
-                  })
-            ],
+        return CheckboxListTile(
+          title: Text(
+            suggestion.title,
+            style: TextStyle(
+              color: suggestion.completed ? Colors.grey : null,
+              decoration:
+                  suggestion.completed ? TextDecoration.lineThrough : null,
+            ),
           ),
+          value: suggestion.completed,
+          enabled: isTaskEnabled(suggestion),
+          onChanged: (bool? newValue) {
+            DataProvider.instance
+                .setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
+            close(context, null);
+          },
         );
       },
     );
