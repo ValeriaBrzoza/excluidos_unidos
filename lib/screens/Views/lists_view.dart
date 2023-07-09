@@ -1,5 +1,4 @@
-import 'package:excluidos_unidos/screens/Views/search_users_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:excluidos_unidos/screens/Views/search_users_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/screens/Views/tasklist_creator_view.dart';
 import 'package:excluidos_unidos/services/data_provider.dart';
@@ -16,8 +15,7 @@ class ListsView extends StatefulWidget {
 }
 
 class _ListsViewState extends State<ListsView> {
-  Stream<List<TaskList>> listsStream =
-      DataProvider.instance.getLists(FirebaseAuth.instance.currentUser!.uid);
+  Stream<List<TaskList>> listsStream = DataProvider.instance.getLists(DataProvider.instance.currentUser.uid);
   bool _reversed = false;
 
   @override
@@ -68,8 +66,7 @@ class _ListsViewState extends State<ListsView> {
               child: const Icon(Icons.add),
             ),
             body: StreamBuilder<List<TaskList>>(
-              stream: DataProvider.instance
-                  .getLists(FirebaseAuth.instance.currentUser!.uid),
+              stream: DataProvider.instance.getLists(DataProvider.instance.currentUser.uid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -117,10 +114,7 @@ class ListSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    final searchResults = listsStream
-        .where((taskList) =>
-            taskList.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+    final searchResults = listsStream.where((taskList) => taskList.name.toLowerCase().contains(query.toLowerCase())).toList();
 
     return ListView.builder(
       itemCount: searchResults.length,
@@ -144,10 +138,7 @@ class ListSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final searchResults = listsStream
-        .where((taskList) =>
-            taskList.name.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+    final searchResults = listsStream.where((taskList) => taskList.name.toLowerCase().contains(query.toLowerCase())).toList();
 
     return ListView.builder(
       itemCount: searchResults.length,
@@ -194,8 +185,7 @@ class TaskListListView extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Eliminar Lista'),
-        content:
-            const Text('¿Estás seguro de que quieres eliminar esta lista?'),
+        content: const Text('¿Estás seguro de que quieres eliminar esta lista?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -238,25 +228,16 @@ class TaskListListView extends StatelessWidget {
               backgroundColor: Colors.red,
               icon: Icons.clear,
             ),
-            Visibility(
-              visible: list.isShared,
-              child: SlidableAction(
+            if (list.isShared)
+              SlidableAction(
                 onPressed: (context) async {
-                  final List<ShareableUser> newlyAddedUsers = await showDialog(
-                    context: context,
-                    builder: (context) => SearchUsers(
-                      authorId: FirebaseAuth.instance.currentUser!.uid,
-                      usersToAdd: const [],
-                    ),
-                  );
-                  addUsersToList(list.id!,
-                      DataProvider.instance.extractIdFrom(newlyAddedUsers));
+                  final List<ShareableUser> usersToAdd = await showSearchUsersDialog(context, excludeUsersIds: list.usersIds);
+                  addUsersToList(list.id!, usersToAdd.map((user) => user.id).toList());
                 },
                 label: 'Añadir',
                 backgroundColor: Colors.grey,
                 icon: Icons.supervised_user_circle_rounded,
               ),
-            )
           ],
         );
 
@@ -268,10 +249,7 @@ class TaskListListView extends StatelessWidget {
             leading: CircleAvatar(
               child: Icon(lists[index].isShared ? Icons.people : Icons.person),
             ),
-            subtitle: lists[index].hasDeadline
-                ? Text(DateFormat('dd/MM/yyyy')
-                    .format(lists[index].globalDeadline!))
-                : null,
+            subtitle: lists[index].hasDeadline ? Text(DateFormat('dd/MM/yyyy').format(lists[index].globalDeadline!)) : null,
             title: Text(lists[index].name),
             onTap: () {
               showTaskList(lists[index], context);

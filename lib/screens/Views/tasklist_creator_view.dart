@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:excluidos_unidos/models/tasklist.dart';
-import 'package:excluidos_unidos/screens/Views/search_users_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:excluidos_unidos/screens/Views/search_users_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:excluidos_unidos/widgets/switch_list_tile.dart';
 import 'package:intl/intl.dart';
@@ -22,11 +21,11 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
 
   String name = "";
 
-  bool isShared = false;
+  bool shared = false;
 
   bool isSupervised = false;
 
-  List<String> usersId = [FirebaseAuth.instance.currentUser!.uid];
+  List<ShareableUser> shareWith = [];
 
   bool tasksLimitDateRequired = false;
 
@@ -53,11 +52,17 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
   }
 
   void complete() {
+    final users = [DataProvider.instance.currentUser.uid];
+
+    if (shared) {
+      users.addAll(shareWith.map((user) => user.id).toList());
+    }
+
     Navigator.of(context).pop(
       TaskList(
         name: name,
-        usersIds: usersId,
-        isShared: isShared,
+        usersIds: users,
+        isShared: shared,
         tasksLimitDateRequired: tasksLimitDateRequired,
         globalDeadline: globalDeadLine, // Agregar fecha de vencimiento
       ),
@@ -74,6 +79,45 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
 
     setState(() {
       globalDeadLine = date;
+    });
+  }
+
+  void enableSharing(bool value) async {
+    if (!value) {
+      return setState(() {
+        shared = false;
+      });
+    }
+
+    if (shareWith.isEmpty) {
+      final users = await showSearchUsersDialog(
+        context,
+        excludeUsersIds: [DataProvider.instance.currentUser.uid],
+        initialUsers: shareWith,
+      );
+
+      if (users.isEmpty) return;
+
+      return setState(() {
+        shareWith = users;
+        shared = true;
+      });
+    }
+
+    setState(() {
+      shared = true;
+    });
+  }
+
+  void showShare() async {
+    final users = await showSearchUsersDialog(
+      context,
+      excludeUsersIds: [DataProvider.instance.currentUser.uid],
+      initialUsers: shareWith,
+    );
+
+    setState(() {
+      shareWith = users;
     });
   }
 
@@ -120,9 +164,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                       if (value != "") {
                         //debe aparecer botón de guardar
                         showSaveButtonTimer?.cancel();
-                        showSaveButtonTimer = Timer(
-                            const Duration(milliseconds: 200),
-                            () => setState(() => enableSaveButton = true));
+                        showSaveButtonTimer = Timer(const Duration(milliseconds: 200), () => setState(() => enableSaveButton = true));
                         setState(() {
                           name = value; //guarda nombre
                         });
@@ -141,42 +183,13 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     ),
                   ),
                   CustomSwitchListTile(
-                      //barrita switchable propia
-                      label: 'Compartir lista',
-                      value: isShared,
-                      onTap: isShared
-                          ? () async {
-                              final List<String> users = await showDialog(
-                                  context: context,
-                                  builder: (context) => SearchUsers(
-                                        authorId: FirebaseAuth
-                                            .instance.currentUser!.uid,
-                                        usersToAdd: selectedUsers,
-                                      ));
-                              setState(() {
-                                usersId.addAll(users);
-                              });
-                            }
-                          : null,
-                      description: 'Agregar Usuarios',
-                      onChanged: (value) async {
-                        setState(() {
-                          isShared = value;
-                        });
-                        if (isShared) {
-                          selectedUsers = await showDialog(
-                              context: context,
-                              builder: (context) => SearchUsers(
-                                    authorId:
-                                        FirebaseAuth.instance.currentUser!.uid,
-                                    usersToAdd: selectedUsers,
-                                  ));
-                          setState(() {
-                            usersId.addAll(DataProvider.instance
-                                .extractIdFrom(selectedUsers));
-                          });
-                        }
-                      }),
+                    //barrita switchable propia
+                    label: 'Compartir lista',
+                    value: shared,
+                    onTap: shared ? showShare : null,
+                    description: shareWith.isEmpty ? 'Agregar Usuarios' : shareWith.map((user) => user.name).join(', '),
+                    onChanged: enableSharing,
+                  ),
                   CustomSwitchListTile(
                     //barrita switchable propia
                     label: 'Requerir fecha máxima para las tareas',
@@ -191,9 +204,7 @@ class _TaskListCreatorViewState extends State<TaskListCreatorView> {
                     //barrita switchable propia
                     label: 'Fecha máxima global',
                     value: globalDeadLine != null,
-                    description: globalDeadLine != null
-                        ? DateFormat('dd MMMM y').format(globalDeadLine!)
-                        : null,
+                    description: globalDeadLine != null ? DateFormat('dd MMMM y').format(globalDeadLine!) : null,
                     onChanged: tasksLimitDateRequired //si fecha limite de tareas
                         ? (value) {
                             if (value == false) {
