@@ -1,4 +1,4 @@
-
+// here https://console.cloud.google.com/cloudscheduler
 const firebase = require("firebase-admin"); // importa la libreria de firebase
 firebase.initializeApp() // inicializa la app de firebase
 
@@ -12,8 +12,9 @@ const {
     onDocumentUpdated,
     onDocumentDeleted,
     Change,
-    FirestoreEvent
-} = require("firebase-functions/v2/firestore") // importa las funciones de firestore
+    // FirestoreEvent
+} = require("firebase-functions/v2/firestore"); // importa las funciones de firestore
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 
 
 async function sendNotificationToUser(userId, notification) {
@@ -105,3 +106,88 @@ module.exports.listTaskCompleted = onDocumentUpdated('task_lists/{id}/tasks/{tas
         })
     }
 });
+
+const dayMs = 24 * 60 * 60 * 1000
+
+function getDateFromDaysFromNow(days) {
+    const threeDaysMs = days * dayMs
+    const futureDay = new Date(Date.now() + threeDaysMs)
+    const day = futureDay.getDate()
+    const month = futureDay.getMonth()
+    const year = futureDay.getFullYear()
+    const date = new Date(year, month, day);
+    return date
+}
+
+async function getTaskListWithDeadLineAtDaysFromNow(days) {
+    const date = getDateFromDaysFromNow(days)
+    const taskLists = await firestore.collection("task_lists").where('global_deadline', '<=', date).where('global_deadline', '>', new Date(date.valueOf() + (days - 1) * dayMs)).get()
+    return taskLists.docs
+}
+
+async function sendAlertToTaskLists(taskLists) {
+    for (const taskList of taskLists) {
+        const data = taskList.data()
+        const deadline = data.global_deadline
+
+        if (!deadline) continue
+
+        if (data.completed_tasks_quantity != data.tasks_quantity) continue
+
+        const users = data.users
+
+        for (const user of users) {
+            await sendNotificationToUser(user, {
+                "title": `Recordatorio: ${data.name}`,
+                "body": `Fecha límite: ${(new Date(deadline)).toLocaleDateString()}`
+            })
+        }
+    }
+}
+
+exports.sendNotification3DaysTaskList = onSchedule('every day 12:00', async (context) => {
+    const tasklists = await getTaskListWithDeadLineAtDaysFromNow(3)
+    await sendAlertToTaskLists(tasklists)
+})
+
+exports.sendNotification1DaysTaskList = onSchedule('every day 12:00', async (context) => {
+    const tasklists = await getTaskListWithDeadLineAtDaysFromNow(1)
+    await sendAlertToTaskLists(tasklists)
+})
+
+
+async function getTasksWithDeadLineAtDaysFromNow(days) {
+    const date = getDateFromDaysFromNow(days)
+    const tasks = await firestore.collectionGroup("tasks").where('deadline', '<=', date).where('deadline', '>', new Date(date.valueOf() + (days - 1) * dayMs)).get()
+    return tasks.docs
+}
+
+async function sendAlertToTasks(tasks) {
+    for (const task of tasks) {
+        const data = task.data()
+
+        if(data.completed) return
+
+        const taskList = (await task.ref.parent.parent.get()).data()
+
+        const users = taskList.users
+
+        for (const user of users) {
+            await sendNotificationToUser(user, {
+                "title": `Recordatorio: ${data.title}`,
+                "body": `Lista: ${taskList.name}`
+            })
+        }
+    }
+}
+
+
+exports.sendNotification3DaysTask = onSchedule('every day 12:00', async (context) => {
+    const tasks = await getTasksWithDeadLineAtDaysFromNow(3)
+    await sendAlertToTasks(tasks)
+})
+
+exports.sendNotification1DaysTask = onSchedule('every day 12:00', async (context) => {
+    const tasks = await getTasksWithDeadLineAtDaysFromNow(1)
+    await sendAlertToTasks(tasks)
+})
