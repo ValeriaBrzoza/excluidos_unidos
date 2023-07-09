@@ -42,8 +42,7 @@ class _TaskListViewState extends State<TaskListView> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Eliminar tarea'),
-        content:
-            const Text('¿Estás seguro de que quieres eliminar esta tarea?'),
+        content: const Text('¿Estás seguro de que quieres eliminar esta tarea?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -69,8 +68,7 @@ class _TaskListViewState extends State<TaskListView> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Eliminar Tareas Completadas'),
-        content: const Text(
-            '¿Estás seguro de que quieres eliminar las tareas completadas?'),
+        content: const Text('¿Estás seguro de que quieres eliminar las tareas completadas?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -99,9 +97,7 @@ class _TaskListViewState extends State<TaskListView> {
   }
 
   bool isTaskEnabled(Task task) {
-    return (task.assignedUser == null ||
-            task.assignedUser == FirebaseAuth.instance.currentUser!.uid) &&
-        !task.completed;
+    return (task.assignedUser == null || task.assignedUser == FirebaseAuth.instance.currentUser!.uid) && !task.completed;
   }
 
   @override
@@ -134,8 +130,7 @@ class _TaskListViewState extends State<TaskListView> {
                       onPressed: () {
                         showSearch(
                           context: context,
-                          delegate: TaskSearchDelegate(
-                              taskLists: tasks, listTask: taskList),
+                          delegate: TaskSearchDelegate(taskLists: tasks, listTask: taskList),
                         );
                       },
                       icon: const Icon(Icons.search),
@@ -153,18 +148,15 @@ class _TaskListViewState extends State<TaskListView> {
                               children: [
                                 ListTile(
                                   leading: const Icon(Icons.circle, size: 14),
-                                  title:
-                                      Text('Tareas: ${taskList.tasksQuantity}'),
+                                  title: Text('Tareas: ${taskList.tasksQuantity}'),
                                 ),
                                 ListTile(
                                   leading: const Icon(Icons.circle, size: 14),
-                                  title: Text(
-                                      'Sin completar: ${taskList.tasksQuantity - taskList.completedTasksQuantity}'),
+                                  title: Text('Sin completar: ${taskList.tasksQuantity - taskList.completedTasksQuantity}'),
                                 ),
                                 ListTile(
                                   leading: const Icon(Icons.circle, size: 14),
-                                  title: Text(
-                                      'Completadas: ${taskList.completedTasksQuantity}'),
+                                  title: Text('Completadas: ${taskList.completedTasksQuantity}'),
                                 ),
                                 ListTile(
                                   leading: const Icon(Icons.circle, size: 14),
@@ -173,8 +165,7 @@ class _TaskListViewState extends State<TaskListView> {
                                 ),
                                 ListTile(
                                   leading: const Icon(Icons.circle, size: 14),
-                                  title: Text(
-                                      'Usuarios: ${taskList.usersIds.length}'),
+                                  title: Text('Usuarios: ${taskList.usersIds.length}'),
                                 ),
                                 const SizedBox(height: 20),
                                 //show users url image as icons with their names
@@ -184,35 +175,27 @@ class _TaskListViewState extends State<TaskListView> {
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
                                       children: taskList.usersIds.map((userId) {
-                                        final user = DataProvider.instance
-                                            .getUser(userId);
+                                        final user = DataProvider.instance.getUser(userId);
                                         return FutureBuilder<ShareableUser>(
                                           future: user,
                                           builder: (context, snapshot) {
                                             if (snapshot.hasData) {
                                               final user = snapshot.data!;
                                               return Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 8),
+                                                padding: const EdgeInsets.only(right: 8),
                                                 child: Column(
                                                   children: [
                                                     CircleAvatar(
                                                       radius: 25,
-                                                      backgroundImage:
-                                                          NetworkImage(
-                                                              user.photoUrl),
+                                                      backgroundImage: NetworkImage(user.photoUrl),
                                                     ),
                                                     const SizedBox(height: 8),
                                                     Text(
                                                       user.name.substring(
                                                         0,
-                                                        user.name.contains(' ')
-                                                            ? user.name
-                                                                .indexOf(' ')
-                                                            : user.name.length,
+                                                        user.name.contains(' ') ? user.name.indexOf(' ') : user.name.length,
                                                       ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                      overflow: TextOverflow.ellipsis,
                                                       maxLines: 1,
                                                     ),
                                                   ],
@@ -220,8 +203,7 @@ class _TaskListViewState extends State<TaskListView> {
                                               );
                                             } else {
                                               return const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
+                                                child: CircularProgressIndicator(),
                                               );
                                             }
                                           },
@@ -274,9 +256,7 @@ class _TaskListViewState extends State<TaskListView> {
                           icon: Icons.clear,
                         ),
                         Visibility(
-                            visible: taskList.isShared &&
-                                task.assignedUser == null &&
-                                task.completed == false,
+                            visible: taskList.isShared && task.assignedUser == null && task.completed == false,
                             child: SlidableAction(
                               onPressed: (context) async {
                                 final String userID = await showDialog(
@@ -309,31 +289,18 @@ class _TaskListViewState extends State<TaskListView> {
                                   content: SizedBox(
                                     height: 60,
                                     child: FutureBuilder<ShareableUser>(
-                                      future: DataProvider.instance
-                                          .getUser(task.assignedUser!),
+                                      future: DataProvider.instance.getUser(task.assignedUser!),
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
                                           final user = snapshot.data;
-                                          return Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              CircleAvatar(
-                                                radius: 25,
-                                                backgroundImage: NetworkImage(
-                                                    user!.photoUrl),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(user.name),
-                                                  const SizedBox(height: 8),
-                                                  Text(user.email),
-                                                ],
-                                              ),
-                                            ],
+
+                                          return ListTile(
+                                            leading: CircleAvatar(
+                                              radius: 25,
+                                              backgroundImage: NetworkImage(user!.photoUrl),
+                                            ),
+                                            title: Text(user.name),
+                                            subtitle: Text(user.email),
                                           );
                                         } else {
                                           return const Center(
@@ -345,8 +312,7 @@ class _TaskListViewState extends State<TaskListView> {
                                   ),
                                   actions: [
                                     TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(false),
+                                      onPressed: () => Navigator.of(context).pop(false),
                                       child: const Text('Cerrar'),
                                     ),
                                   ],
@@ -356,15 +322,13 @@ class _TaskListViewState extends State<TaskListView> {
                           },
                           icon: task.assignedUser != null
                               ? FutureBuilder<ShareableUser>(
-                                  future: DataProvider.instance
-                                      .getUser(task.assignedUser!),
+                                  future: DataProvider.instance.getUser(task.assignedUser!),
                                   builder: (context, snapshot) {
                                     if (snapshot.hasData) {
                                       final user = snapshot.data;
                                       return CircleAvatar(
                                         radius: 15,
-                                        backgroundImage:
-                                            NetworkImage(user!.photoUrl),
+                                        backgroundImage: NetworkImage(user!.photoUrl),
                                       );
                                     } else {
                                       return const CircularProgressIndicator();
@@ -376,21 +340,15 @@ class _TaskListViewState extends State<TaskListView> {
                         title: Text(
                           task.title,
                           style: TextStyle(
-                              color: task.completed ? Colors.grey : null,
-                              decoration: task.completed
-                                  ? TextDecoration.lineThrough
-                                  : null),
+                              color: task.completed ? Colors.grey : null, decoration: task.completed ? TextDecoration.lineThrough : null),
                         ),
-                        subtitle: widget.tasksList.tasksLimitDateRequired &&
-                                task.deadline != null
-                            ? Text(
-                                DateFormat('dd/MM/yyyy').format(task.deadline!))
+                        subtitle: widget.tasksList.tasksLimitDateRequired && task.deadline != null
+                            ? Text(DateFormat('dd/MM/yyyy').format(task.deadline!))
                             : null,
                         value: task.completed,
                         enabled: isTaskEnabled(task),
                         onChanged: (bool? newValue) {
-                          DataProvider.instance.setTaskCompleted(
-                              taskList.id!, task.id!, newValue!);
+                          DataProvider.instance.setTaskCompleted(taskList.id!, task.id!, newValue!);
                         },
                       ),
                     );
@@ -417,9 +375,7 @@ class TaskSearchDelegate extends SearchDelegate {
   final TaskList listTask;
 
   bool isTaskEnabled(Task task) {
-    return (task.assignedUser == null ||
-            task.assignedUser == FirebaseAuth.instance.currentUser!.uid) &&
-        !task.completed;
+    return (task.assignedUser == null || task.assignedUser == FirebaseAuth.instance.currentUser!.uid) && !task.completed;
   }
 
   @override
@@ -456,19 +412,18 @@ class TaskSearchDelegate extends SearchDelegate {
       itemBuilder: (context, index) {
         var suggestion = suggestions[index];
         return CheckboxListTile(
+          key: Key(suggestion.id!),
           title: Text(
             suggestion.title,
             style: TextStyle(
               color: suggestion.completed ? Colors.grey : null,
-              decoration:
-                  suggestion.completed ? TextDecoration.lineThrough : null,
+              decoration: suggestion.completed ? TextDecoration.lineThrough : null,
             ),
           ),
           value: suggestion.completed,
           enabled: isTaskEnabled(suggestion),
           onChanged: (bool? newValue) {
-            DataProvider.instance
-                .setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
+            DataProvider.instance.setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
             close(context, null);
           },
         );
@@ -494,15 +449,13 @@ class TaskSearchDelegate extends SearchDelegate {
             suggestion.title,
             style: TextStyle(
               color: suggestion.completed ? Colors.grey : null,
-              decoration:
-                  suggestion.completed ? TextDecoration.lineThrough : null,
+              decoration: suggestion.completed ? TextDecoration.lineThrough : null,
             ),
           ),
           value: suggestion.completed,
           enabled: isTaskEnabled(suggestion),
           onChanged: (bool? newValue) {
-            DataProvider.instance
-                .setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
+            DataProvider.instance.setTaskCompleted(listTask.id!, suggestion.id!, newValue!);
             close(context, null);
           },
         );
